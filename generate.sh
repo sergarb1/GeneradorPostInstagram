@@ -1,12 +1,9 @@
 #!/usr/bin/env bash
-# Generador de posts Instagram — Linux/Mac
-# Soporta: opencode, codex, gemini, claude para generación automática de contenido
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR"
 
-# ── parse args ──────────────────────────────────────────────
 AI_MODE=""
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -16,69 +13,77 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-# ── check deps ──────────────────────────────────────────────
 command -v python3 >/dev/null 2>&1 || { echo "❌ Necesitas Python 3"; exit 1; }
 
-# ── IA: generar config desde context.md ────────────────────
 CONTEXT_FILE="custom/context.md"
-CONFIG_FILE="config.yaml"
 
-if [ -n "$AI_MODE" ] && [ -f "$CONTEXT_FILE" ]; then
+if [ -n "$AI_MODE" ]; then
+  if [ ! -f "$CONTEXT_FILE" ]; then
+    echo "📝 Describe tu proyecto (texto libre, luego Ctrl+D):"
+    mkdir -p custom
+    cat > "$CONTEXT_FILE"
+    echo "✓ Guardado en $CONTEXT_FILE"
+  fi
+
   CONTEXT=$(cat "$CONTEXT_FILE")
   echo "🤖 Generando config con $AI_MODE..."
 
+  GENERATED=""
   case "$AI_MODE" in
     opencode)
       if command -v opencode >/dev/null 2>&1; then
-        echo "$CONTEXT" | opencode --prompt "
-          A partir de este contexto de proyecto, genera un archivo YAML 'config.yaml' 
+        GENERATED=$(echo "$CONTEXT" | opencode --prompt "
+          A partir de este contexto de proyecto, genera un archivo YAML 'config.yaml'
           para un post de Instagram promocional.
-          El YAML debe tener: title, tagline, body (con saltos de línea \n), 
+          El YAML debe tener: title, tagline, body (con saltos de línea \n),
           features (4 items con icon/title/desc), cta_text, hashtags.
-          Responde SÓLO con el YAML, sin explicaciones."
+          Responde SÓLO con el YAML, sin explicaciones.")
       else
-        echo "⚠️  opencode no instalado. Usando config por defecto."
+        echo "⚠️  opencode no instalado. Usando modo interactivo."
       fi
       ;;
     gemini)
       if command -v gemini >/dev/null 2>&1; then
-        echo "$CONTEXT" | gemini --prompt "
+        GENERATED=$(echo "$CONTEXT" | gemini --prompt "
           Genera un archivo YAML 'config.yaml' para un post de Instagram.
           Incluye: title, tagline, body, features (4 items), cta_text, hashtags.
-          Responde solo con el YAML."
+          Responde solo con el YAML.")
       else
-        echo "⚠️  gemini no instalado. Usando config por defecto."
+        echo "⚠️  gemini no instalado. Usando modo interactivo."
       fi
       ;;
     codex)
       if command -v codex >/dev/null 2>&1; then
-        echo "$CONTEXT" | codex --prompt "
+        GENERATED=$(echo "$CONTEXT" | codex --prompt "
           Generate a YAML config for an Instagram post.
           Include: title, tagline, body, features (4 items), cta_text, hashtags.
-          Output only YAML."
+          Output only YAML.")
       else
-        echo "⚠️  codex no instalado. Usando config por defecto."
+        echo "⚠️  codex no instalado. Usando modo interactivo."
       fi
       ;;
     claude)
       if command -v claude >/dev/null 2>&1; then
-        echo "$CONTEXT" | claude --prompt "
+        GENERATED=$(echo "$CONTEXT" | claude --prompt "
           Genera un archivo YAML 'config.yaml' para un post de Instagram promocional.
           Incluye: title, tagline, body, features (4 items con icon/title/desc), cta_text, hashtags.
-          Responde solo con el YAML, sin explicaciones."
+          Responde solo con el YAML, sin explicaciones.")
       else
-        echo "⚠️  claude no instalado. Usando config por defecto."
+        echo "⚠️  claude no instalado. Usando modo interactivo."
       fi
       ;;
     *)
       echo "⚠️  IA '$AI_MODE' no reconocida. Opciones: opencode, codex, gemini, claude"
       ;;
   esac
-elif [ -n "$AI_MODE" ]; then
-  echo "⚠️  No hay custom/context.md. Crea uno o usa la configuración por defecto."
+
+  if [ -n "$GENERATED" ]; then
+    mkdir -p custom
+    echo "$GENERATED" > custom/config.generated.yaml
+    echo "✓ Config generada por IA guardada en custom/config.generated.yaml"
+  fi
 fi
 
-# ── descargar fuentes ──────────────────────────────────────
 if [ ! -d "fonts" ] || [ -z "$(ls -A fonts/ 2>/dev/null)" ]; then
   echo "📥 Descargando fuentes..."
   mkdir -p fonts
@@ -93,13 +98,16 @@ for name, url in fonts.items():
   with open(f'fonts/{name}', 'wb') as f:
     f.write(r.content)
   print(f'  {name} descargado')
-" 2>/dev/null || echo "⚠️  No se pudieron descargar fuentes. Usando fuente por defecto."
+" 2>/dev/null || echo "⚠️  No se pudieron descargar fuentes."
 fi
 
-# ── instalar deps ──────────────────────────────────────────
 echo "📦 Verificando dependencias..."
-pip3 install -q --break-system-packages pillow pyyaml requests 2>/dev/null || pip install -q --break-system-packages pillow pyyaml requests
+pip3 install -q --break-system-packages pillow pyyaml requests 2>/dev/null || pip install -q --break-system-packages pillow pyyaml requests 2>/dev/null || pip install -q pillow pyyaml requests
 
-# ── generar post ───────────────────────────────────────────
 echo "🖼  Generando post..."
-python3 post.py
+
+if [ -n "$AI_MODE" ] && [ -f "custom/config.generated.yaml" ]; then
+  python3 post.py
+else
+  python3 post.py --interactive
+fi

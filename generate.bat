@@ -1,19 +1,15 @@
 @echo off
-REM Generador de posts Instagram — Windows
 chcp 65001 >nul
-
 set SCRIPT_DIR=%~dp0
 cd /d "%SCRIPT_DIR%"
 
-REM ── check deps ────────────────────────────────────────────
 where python >nul 2>&1
 if %errorlevel% neq 0 (
-    echo ❌ Necesitas Python 3. Instalalo desde https://www.python.org/downloads/
+    echo ❌ Necesitas Python 3: https://www.python.org/downloads/
     pause
     exit /b 1
 )
 
-REM ── descargar fuentes ─────────────────────────────────────
 if not exist fonts\* (
     echo 📥 Descargando fuentes...
     mkdir fonts 2>nul
@@ -31,13 +27,11 @@ for name, url in fonts.items():
 "
 )
 
-REM ── instalar deps ─────────────────────────────────────────
 echo 📦 Instalando dependencias...
 pip install -q --break-system-packages pillow pyyaml requests
 
-REM ── generar post ──────────────────────────────────────────
 echo 🖼  Generando post...
-python post.py
+python post.py --interactive
 
 echo.
 pause
