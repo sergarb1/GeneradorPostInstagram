@@ -86,16 +86,44 @@ Si la herramienta no está instalada o no hay `custom/context.md`, usa la config
 
 ## 🖥️ Requisitos
 
-- **Python 3** + Pillow, pyyaml, requests
-- Opcional: una CLI de IA (opencode, gemini, codex, claude)
+### Programas necesarios
 
-Instalación de dependencias:
+| Programa | Cómo instalarlo |
+|----------|----------------|
+| **Python 3.8+** | [Descargar python.org](https://python.org) o `sudo apt install python3 python3-pip` (Linux), `brew install python` (Mac) |
+| **pip** | Viene con Python 3.4+. Si falta: `python3 -m ensurepip --upgrade` |
+| **Git** | `sudo apt install git` (Linux), `brew install git` (Mac), o [git-scm.com](https://git-scm.com) |
+
+Verifica que todo está listo:
+
+```bash
+python3 --version && pip --version && git --version
+```
+
+### Dependencias Python
+
+```bash
+pip install -r requirements.txt
+```
+
+O manualmente:
 
 ```bash
 pip install pillow pyyaml requests
 ```
 
-El script `generate.sh` descarga las fuentes automáticamente.
+### Opcional — CLIs de IA
+
+| Herramienta | Instalación |
+|-------------|-------------|
+| **opencode** | `npm install -g @opencode/cli` |
+| **Gemini CLI** | `pip install google-generativeai` |
+| **Codex CLI** | `npm install -g @openai/codex` |
+| **Claude CLI** | `npm install -g @anthropic-ai/claude` |
+
+### Fuentes
+
+El script `generate.sh` descarga las fuentes Outfit automáticamente al ejecutarse. No hace falta hacer nada.
 
 ---
 
@@ -105,6 +133,7 @@ El script `generate.sh` descarga las fuentes automáticamente.
 GeneradorPostInstagram/
 ├── post.py              # Generador principal (Pillow)
 ├── config.yaml          # Configuración del post
+├── requirements.txt     # Dependencias Python
 ├── generate.sh          # Script Linux/Mac (descarga fuentes, instala deps, ejecuta)
 ├── generate.bat         # Script Windows
 ├── index.html           # Página web del proyecto

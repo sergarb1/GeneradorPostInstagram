@@ -18,6 +18,7 @@ Genera imágenes promocionales 1080×1080 para Instagram desde YAML config. Func
 GeneradorPostInstagram/
 ├── post.py              # Core: lee YAML, dibuja con Pillow, guarda PNG
 ├── config.yaml          # Config principal (título, features, colores, etc.)
+├── requirements.txt     # Dependencias Python
 ├── generate.sh          # Script Linux/Mac
 ├── generate.bat         # Script Windows
 ├── index.html           # Landing page del proyecto

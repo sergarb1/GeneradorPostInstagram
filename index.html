@@ -111,6 +111,46 @@ Valores: gratuito, colaborativo, código abierto.</pre>
       </div>
     </section>
 
+    <!-- Requisitos -->
+    <section class="mb-16">
+      <h2 class="text-3xl font-black text-center mb-10">📋 Requisitos</h2>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10">
+          <h3 class="text-xl font-bold mb-4">Programas necesarios</h3>
+          <ul class="space-y-4 text-slate-300">
+            <li class="flex items-start gap-3">
+              <span class="text-green-400 mt-0.5 shrink-0">▸</span>
+              <div><strong class="text-white">Python 3.8+</strong> — <code class="text-indigo-300 text-sm">sudo apt install python3 python3-pip</code> (Linux), <code class="text-indigo-300 text-sm">brew install python</code> (Mac), o <a href="https://python.org" class="text-indigo-400 hover:underline">python.org</a></div>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-green-400 mt-0.5 shrink-0">▸</span>
+              <div><strong class="text-white">pip</strong> — Viene con Python 3.4+. Si falta: <code class="text-indigo-300 text-sm">python3 -m ensurepip --upgrade</code></div>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-green-400 mt-0.5 shrink-0">▸</span>
+              <div><strong class="text-white">Git</strong> — <code class="text-indigo-300 text-sm">sudo apt install git</code> (Linux), <code class="text-indigo-300 text-sm">brew install git</code> (Mac), o <a href="https://git-scm.com" class="text-indigo-400 hover:underline">git-scm.com</a></div>
+            </li>
+          </ul>
+          <p class="text-slate-400 text-sm mt-4">Verifica: <code class="text-indigo-300">python3 --version && pip --version && git --version</code></p>
+        </div>
+        <div class="bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10">
+          <h3 class="text-xl font-bold mb-4">Dependencias Python</h3>
+          <div class="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50 font-mono text-sm mb-6">
+            <div class="text-green-400 mb-1"># Con requirements.txt</div>
+            <div class="text-slate-300">pip install -r requirements.txt</div>
+          </div>
+          <h4 class="font-bold text-white mb-2">Opcional — CLIs de IA</h4>
+          <ul class="space-y-2 text-sm text-slate-300">
+            <li><strong class="text-white">opencode</strong> — <code class="text-indigo-300">npm install -g @opencode/cli</code></li>
+            <li><strong class="text-white">Gemini CLI</strong> — <code class="text-indigo-300">pip install google-generativeai</code></li>
+            <li><strong class="text-white">Codex CLI</strong> — <code class="text-indigo-300">npm install -g @openai/codex</code></li>
+            <li><strong class="text-white">Claude CLI</strong> — <code class="text-indigo-300">npm install -g @anthropic-ai/claude</code></li>
+          </ul>
+          <p class="text-xs text-slate-500 mt-4">Las fuentes se descargan automáticamente. No requiere acción.</p>
+        </div>
+      </div>
+    </section>
+
     <!-- Estructura -->
     <section class="mb-16">
       <h2 class="text-3xl font-black text-center mb-10">📁 Estructura</h2>
@@ -118,6 +158,7 @@ Valores: gratuito, colaborativo, código abierto.</pre>
         <span class="text-indigo-400">GeneradorPostInstagram/</span><br/>
         ├── <span class="text-green-400">post.py</span>              Generador principal (Pillow)<br/>
         ├── <span class="text-green-400">config.yaml</span>          Configuración del post<br/>
+        ├── <span class="text-green-400">requirements.txt</span>     Dependencias Python<br/>
         ├── <span class="text-green-400">generate.sh</span>          Script Linux/Mac<br/>
         ├── <span class="text-green-400">generate.bat</span>         Script Windows<br/>
         ├── <span class="text-green-400">index.html</span>           Página web del proyecto<br/>
