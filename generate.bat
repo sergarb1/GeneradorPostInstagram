@@ -4,6 +4,32 @@ set SCRIPT_DIR=%~dp0
 cd /d "%SCRIPT_DIR%"
 set MODE_FILE=custom\.mode
 
+rem ── parse args ──────────────────────────────────────────────
+if "%1"=="--modo" (
+    if "%2"=="" (
+        echo Uso: %0 --modo manual^|opencode^|gemini^|codex^|claude
+        pause
+        exit /b 1
+    )
+    if not exist custom mkdir custom
+    echo %2 > "%MODE_FILE%"
+    echo ✓ Modo cambiado a: %2
+    pause
+    exit /b 0
+)
+if "%1"=="-m" (
+    if "%2"=="" (
+        echo Uso: %0 --modo manual^|opencode^|gemini^|codex^|claude
+        pause
+        exit /b 1
+    )
+    if not exist custom mkdir custom
+    echo %2 > "%MODE_FILE%"
+    echo ✓ Modo cambiado a: %2
+    pause
+    exit /b 0
+)
+
 where python >nul 2>&1
 if %errorlevel% neq 0 (
     echo ❌ Necesitas Python 3: https://www.python.org/downloads/
@@ -22,7 +48,7 @@ fonts = {
 }
 for name, url in fonts.items():
     r = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
-    with open(f'fonts/{name}', 'wb') as f:
+    with open('fonts/' + name, 'wb') as f:
         f.write(r.content)
     print(f'  {name} descargado')
 "
@@ -36,7 +62,7 @@ if not exist "%MODE_FILE%" (
     echo 🎨 ¿Cómo quieres crear tu post de Instagram?
     echo.
     echo   1) Manual — te guío paso a paso con preguntas
-    echo   2) IA — prepara un prompt para ChatGPT, Claude, etc.
+    echo   2) IA — prepara un prompt interactivo para ChatGPT, Claude, etc.
     echo.
     set /p choice="Elige (1-2) [1]: "
     if "%choice%"=="" set choice=1
@@ -45,7 +71,7 @@ if not exist "%MODE_FILE%" (
 )
 
 set /p MODE=<"%MODE_FILE%"
-echo 📋 Modo: %MODE%
+echo 📋 Modo: %MODE%    (cambia con: --modo manual^|opencode^|gemini^|codex^|claude)
 
 if "%MODE%"=="manual" (
     python post.py --interactive
@@ -57,7 +83,6 @@ rem ── modo IA ────────────────────�
 if not exist custom\context.md (
     echo.
     echo 📝 Describe tu proyecto:
-    echo.
     set /p context="> "
     if not exist custom mkdir custom
     echo %context% > custom\context.md
@@ -68,9 +93,13 @@ set /p CONTEXT=<custom\context.md
 
 if not exist custom mkdir custom
 (
-echo Eres un experto en marketing educativo. Crea un archivo YAML para un post de Instagram promocional.
+echo Eres un asistente experto en marketing educativo.
 echo.
-echo El YAML debe tener estas claves:
+echo Entrevista al usuario para crear un post de Instagram.
+echo Pregunta una cosa a la vez. Cuando tengas toda la informacion,
+echo responde UNICAMENTE con el YAML, sin explicaciones.
+echo.
+echo El YAML debe tener:
 echo - title: titulo llamativo (max 40 caracteres)
 echo - tagline: frase corta (max 60)
 echo - body: texto con \n para saltos (max 200)
@@ -78,17 +107,21 @@ echo - features: 4 items con icon (emoji), title, desc
 echo - cta_text: texto del boton
 echo - hashtags: separados por espacios
 echo.
-echo Contexto:
+echo Contexto del proyecto:
 echo ---
 echo %CONTEXT%
 echo ---
-echo YAML:
+echo.
+echo Empieza la conversacion. Saluda al usuario.
 ) > custom\prompt.md
 
 echo.
-echo ✅ Prompt listo en custom\prompt.md
+echo ✅ Prompt preparado en custom\prompt.md
 echo.
-echo Pásalo a tu IA favorita y guarda el resultado en custom\config.generated.yaml
-echo Luego ejecuta: python post.py
+echo Puedes copiarlo a ChatGPT, Claude, etc. o ejecutar:
+echo   type custom\prompt.md ^| opencode
+echo.
+echo Cuando tengas el YAML, guardalo en custom\config.generated.yaml
+echo y ejecuta: python post.py
 echo.
 pause
