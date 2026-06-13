@@ -1,0 +1,40 @@
+title: "Mejora tu Docencia"
+tagline: "Recursos gratuitos para innovar en el aula"
+body: "Un proyecto abierto y colaborativo para compartir estrategias, recursos y herramientas que transforman la educación."
+
+features:
+  - icon: "🎯"
+    title: "100% Gratuito"
+    desc: "Sin coste, sin registro, sin publicidad"
+  - icon: "🤝"
+    title: "Colaborativo"
+    desc: "Creado por y para docentes"
+  - icon: "🌍"
+    title: "Libre Acceso"
+    desc: "Todo el contenido está a un clic"
+  - icon: "💚"
+    title: "Espíritu educativo"
+    desc: "Mejorar la enseñanza es el objetivo"
+
+cta_text: "mejoratudocencia.es"
+cta_url: "https://mejoratudocencia.es"
+hashtags: "#Educación #Docentes #InnovaciónEducativa #Gratuito"
+
+colors:
+  primary: "#16a34a"
+  primary_dark: "#14532d"
+  gradient_top: "#16a34a"
+  gradient_bottom: "#052e16"
+  card_bg: "#ffffffeb"
+  text_body: "#475569"
+  text_light: "#64748b"
+  accent_light: "#bbf7d0"
+
+fonts:
+  title: "Outfit-Bold.ttf"
+  tagline: "Outfit-Regular.ttf"
+  body: "Outfit-Regular.ttf"
+  bold: "Outfit-Bold.ttf"
+
+logo: null
+output: "output/post.png"

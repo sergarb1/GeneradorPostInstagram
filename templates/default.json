@@ -1,0 +1,6 @@
+# Template: Default
+# Gradient verde, estilo clean card
+
+layout: "card"  # card | minimal | full
+width: 1080
+height: 1080
