@@ -33,7 +33,7 @@ for name, url in fonts.items():
 
 REM ── instalar deps ─────────────────────────────────────────
 echo 📦 Instalando dependencias...
-pip install -q pillow pyyaml requests
+pip install -q --break-system-packages pillow pyyaml requests
 
 REM ── generar post ──────────────────────────────────────────
 echo 🖼  Generando post...

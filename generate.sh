@@ -98,7 +98,7 @@ fi
 
 # ── instalar deps ──────────────────────────────────────────
 echo "📦 Verificando dependencias..."
-pip3 install -q pillow pyyaml requests 2>/dev/null || pip install -q pillow pyyaml requests
+pip3 install -q --break-system-packages pillow pyyaml requests 2>/dev/null || pip install -q --break-system-packages pillow pyyaml requests
 
 # ── generar post ───────────────────────────────────────────
 echo "🖼  Generando post..."
