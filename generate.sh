@@ -24,19 +24,12 @@ choose_mode() {
   echo "🎨 ¿Cómo quieres crear tu post de Instagram?" >&2
   echo "" >&2
   echo "  1) Manual — te guío paso a paso con preguntas" >&2
-  echo "  2) opencode — IA local que trabaja con tu código" >&2
-  echo "  3) Gemini CLI — la IA de Google" >&2
-  echo "  4) Codex CLI — la IA de OpenAI para terminal" >&2
-  echo "  5) Claude CLI — la IA de Anthropic" >&2
+  echo "  2) IA — prepara un prompt para que lo uses con ChatGPT, Claude, etc." >&2
   echo "" >&2
-  read -p $'\e[1mElige (1-5) [1]:\e[0m ' choice
+  read -p $'\e[1mElige (1-2) [1]:\e[0m ' choice
   choice="${choice:-1}"
   case "$choice" in
-    1) echo "manual" ;;
-    2) echo "opencode" ;;
-    3) echo "gemini" ;;
-    4) echo "codex" ;;
-    5) echo "claude" ;;
+    2) echo "ai" ;;
     *) echo "manual" ;;
   esac
 }
@@ -80,12 +73,13 @@ if [ "$MODE" = "manual" ]; then
   exit 0
 fi
 
+# ── modo IA: preparar prompt ─────────────────────────────
 CONTEXT_FILE="custom/context.md"
 
 if [ ! -f "$CONTEXT_FILE" ]; then
   echo "" >&2
-  echo "📝 Cuéntame sobre tu proyecto:" >&2
-  echo "   (Escribe una descripción libre. Ctrl+D para terminar.)" >&2
+  echo "📝 Describe tu proyecto en unas líneas:" >&2
+  echo "   (Ctrl+D para terminar)" >&2
   echo "" >&2
   mkdir -p custom
   cat > "$CONTEXT_FILE"
@@ -93,52 +87,40 @@ if [ ! -f "$CONTEXT_FILE" ]; then
 fi
 
 CONTEXT=$(cat "$CONTEXT_FILE")
-echo "🤖 Generando configuración con $MODE..." >&2
 
-PROMPT="Eres un experto en marketing educativo y redes sociales.
+PROMPT_FILE="custom/prompt.md"
+cat > "$PROMPT_FILE" << PROMPT
+Eres un experto en marketing educativo. Crea un archivo YAML para un post de Instagram promocional.
 
-Crea un YAML para un post de Instagram. Solo YAML, sin explicaciones.
-
-Claves:
-- title: título llamativo (max 40 chars)
-- tagline: frase corta (max 60 chars)
-- body: texto con \n para saltos (max 200 chars)
-- features: 4 items con icon (emoji), title, desc
-- cta_text: texto del botón
+El YAML debe tener estas claves:
+- title: título llamativo (máx. 40 caracteres)
+- tagline: frase corta de apoyo (máx. 60 caracteres)
+- body: texto principal, usa \\n para saltos de línea (máx. 200 caracteres)
+- features: 4 elementos, cada uno con icon (emoji), title (corto), desc (una línea)
+- cta_text: texto del botón (URL o texto corto)
 - hashtags: separados por espacios
+
+Reglas:
+- Tono cercano, inspirador, profesional
+- Responde ÚNICAMENTE con el YAML, sin explicaciones
 
 Contexto del proyecto:
 ---
 $CONTEXT
 ---
 
-YAML:"
+YAML:
+PROMPT
 
-GENERATED=""
-TIMEOUT=30
-RUN_AI() {
-  local tool="$1"; shift
-  command -v "$tool" >/dev/null 2>&1 || return 1
-  if command -v timeout >/dev/null 2>&1; then
-    echo "$PROMPT" | timeout $TIMEOUT "$tool" "$@" 2>/dev/null || return 1
-  else
-    echo "$PROMPT" | "$tool" "$@" 2>/dev/null || return 1
-  fi
-}
-
-case "$MODE" in
-  opencode) GENERATED=$(RUN_AI opencode) ;;
-  gemini)   GENERATED=$(RUN_AI gemini) ;;
-  codex)    GENERATED=$(RUN_AI codex) ;;
-  claude)   GENERATED=$(RUN_AI claude) ;;
-esac
-
-if [ -n "$GENERATED" ]; then
-  mkdir -p custom
-  echo "$GENERATED" > custom/config.generated.yaml
-  echo "✓ Configuración generada por $MODE" >&2
-  python3 post.py
-else
-  echo "⚠️  No se pudo generar con IA. Pasando a modo manual." >&2
-  python3 post.py --interactive
-fi
+echo "" >&2
+echo "✅ Prompt listo en: $PROMPT_FILE" >&2
+echo "" >&2
+echo "📤 Pásalo a tu IA favorita:" >&2
+echo "   cat $PROMPT_FILE | opencode" >&2
+echo "   cat $PROMPT_FILE | gemini -" >&2
+echo "   cat $PROMPT_FILE | claude -" >&2
+echo "   cat $PROMPT_FILE | codex -" >&2
+echo "" >&2
+echo "Guarda la respuesta en custom/config.generated.yaml y ejecuta:" >&2
+echo "   python3 post.py" >&2
+echo "" >&2
