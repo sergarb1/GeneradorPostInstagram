@@ -66,7 +66,7 @@ fonts = {
 }
 for name, url in fonts.items():
   r = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
-  with open(f'fonts/{name}', 'wb') as f:
+  with open('fonts/' + name, 'wb') as f:
     f.write(r.content)
   print(f'  {name} descargado')
 " 2>/dev/null || echo "⚠️  No se pudieron descargar fuentes." >&2
@@ -95,73 +95,50 @@ fi
 CONTEXT=$(cat "$CONTEXT_FILE")
 echo "🤖 Generando configuración con $MODE..." >&2
 
-BASE_PROMPT="Eres un experto en marketing educativo y redes sociales. Tu tarea es crear la configuración YAML para un post promocional de Instagram a partir de la descripción de un proyecto.
+PROMPT="Eres un experto en marketing educativo y redes sociales.
 
-La configuración debe incluir estas claves YAML:
-  - title: título llamativo del post (máximo 40 caracteres)
-  - tagline: frase corta de apoyo (máximo 60 caracteres)
-  - body: texto principal del post, puede usar \n para saltos de línea (máximo 200 caracteres)
-  - features: lista de 4 elementos, cada uno con icon (emoji), title (corto) y desc (una línea)
-  - cta_text: texto del botón de llamada a la acción (una URL o texto corto)
-  - hashtags: cadena con hashtags separados por espacios
+Crea un YAML para un post de Instagram. Solo YAML, sin explicaciones.
 
-Reglas:
-- Tono cercano, inspirador, profesional
-- Los features deben destacar beneficios reales
-- El título debe captar atención
-- Responde ÚNICAMENTE con el YAML, sin explicaciones ni código alrededor
+Claves:
+- title: título llamativo (max 40 chars)
+- tagline: frase corta (max 60 chars)
+- body: texto con \n para saltos (max 200 chars)
+- features: 4 items con icon (emoji), title, desc
+- cta_text: texto del botón
+- hashtags: separados por espacios
 
 Contexto del proyecto:
 ---
-
 $CONTEXT
-
 ---
 
 YAML:"
 
 GENERATED=""
+TIMEOUT=30
+RUN_AI() {
+  local tool="$1"; shift
+  command -v "$tool" >/dev/null 2>&1 || return 1
+  if command -v timeout >/dev/null 2>&1; then
+    echo "$PROMPT" | timeout $TIMEOUT "$tool" "$@" 2>/dev/null || return 1
+  else
+    echo "$PROMPT" | "$tool" "$@" 2>/dev/null || return 1
+  fi
+}
+
 case "$MODE" in
-  opencode)
-    if command -v opencode >/dev/null 2>&1; then
-      GENERATED=$(opencode --prompt "$BASE_PROMPT" 2>/dev/null)
-    else
-      echo "⚠️  opencode no está instalado." >&2
-      echo "   Instálalo con: npm install -g @opencode/cli" >&2
-    fi
-    ;;
-  gemini)
-    if command -v gemini >/dev/null 2>&1; then
-      GENERATED=$(gemini --prompt "$BASE_PROMPT" 2>/dev/null)
-    else
-      echo "⚠️  Gemini CLI no está instalado." >&2
-      echo "   Instálalo con: pip install google-generativeai" >&2
-    fi
-    ;;
-  codex)
-    if command -v codex >/dev/null 2>&1; then
-      GENERATED=$(codex --prompt "$BASE_PROMPT" 2>/dev/null)
-    else
-      echo "⚠️  Codex CLI no está instalado." >&2
-      echo "   Instálalo con: npm install -g @openai/codex" >&2
-    fi
-    ;;
-  claude)
-    if command -v claude >/dev/null 2>&1; then
-      GENERATED=$(claude --prompt "$BASE_PROMPT" 2>/dev/null)
-    else
-      echo "⚠️  Claude CLI no está instalado." >&2
-      echo "   Instálalo con: npm install -g @anthropic-ai/claude" >&2
-    fi
-    ;;
+  opencode) GENERATED=$(RUN_AI opencode) ;;
+  gemini)   GENERATED=$(RUN_AI gemini) ;;
+  codex)    GENERATED=$(RUN_AI codex) ;;
+  claude)   GENERATED=$(RUN_AI claude) ;;
 esac
 
 if [ -n "$GENERATED" ]; then
   mkdir -p custom
   echo "$GENERATED" > custom/config.generated.yaml
-  echo "✓ Configuración generada por $MODE guardada en custom/config.generated.yaml" >&2
+  echo "✓ Configuración generada por $MODE" >&2
   python3 post.py
 else
-  echo "ℹ️  No se pudo generar con IA. Usando modo manual." >&2
+  echo "⚠️  No se pudo generar con IA. Pasando a modo manual." >&2
   python3 post.py --interactive
 fi
