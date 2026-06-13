@@ -4,86 +4,60 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR"
 
-AI_MODE=""
-while [[ $# -gt 0 ]]; do
-  case "$1" in
-    --ai) AI_MODE="$2"; shift 2 ;;
-    --ai=*) AI_MODE="${1#*=}"; shift ;;
-    *) echo "Uso: $0 [--ai opencode|codex|gemini|claude]"; exit 1 ;;
-  esac
-done
+MODE_FILE="custom/.mode"
 
 command -v python3 >/dev/null 2>&1 || { echo "❌ Necesitas Python 3"; exit 1; }
 
-CONTEXT_FILE="custom/context.md"
-
-if [ -n "$AI_MODE" ]; then
-  if [ ! -f "$CONTEXT_FILE" ]; then
-    echo "📝 Describe tu proyecto (texto libre, luego Ctrl+D):"
-    mkdir -p custom
-    cat > "$CONTEXT_FILE"
-    echo "✓ Guardado en $CONTEXT_FILE"
-  fi
-
-  CONTEXT=$(cat "$CONTEXT_FILE")
-  echo "🤖 Generando config con $AI_MODE..."
-
-  GENERATED=""
-  case "$AI_MODE" in
-    opencode)
-      if command -v opencode >/dev/null 2>&1; then
-        GENERATED=$(echo "$CONTEXT" | opencode --prompt "
-          A partir de este contexto de proyecto, genera un archivo YAML 'config.yaml'
-          para un post de Instagram promocional.
-          El YAML debe tener: title, tagline, body (con saltos de línea \n),
-          features (4 items con icon/title/desc), cta_text, hashtags.
-          Responde SÓLO con el YAML, sin explicaciones.")
-      else
-        echo "⚠️  opencode no instalado. Usando modo interactivo."
-      fi
-      ;;
-    gemini)
-      if command -v gemini >/dev/null 2>&1; then
-        GENERATED=$(echo "$CONTEXT" | gemini --prompt "
-          Genera un archivo YAML 'config.yaml' para un post de Instagram.
-          Incluye: title, tagline, body, features (4 items), cta_text, hashtags.
-          Responde solo con el YAML.")
-      else
-        echo "⚠️  gemini no instalado. Usando modo interactivo."
-      fi
-      ;;
-    codex)
-      if command -v codex >/dev/null 2>&1; then
-        GENERATED=$(echo "$CONTEXT" | codex --prompt "
-          Generate a YAML config for an Instagram post.
-          Include: title, tagline, body, features (4 items), cta_text, hashtags.
-          Output only YAML.")
-      else
-        echo "⚠️  codex no instalado. Usando modo interactivo."
-      fi
-      ;;
-    claude)
-      if command -v claude >/dev/null 2>&1; then
-        GENERATED=$(echo "$CONTEXT" | claude --prompt "
-          Genera un archivo YAML 'config.yaml' para un post de Instagram promocional.
-          Incluye: title, tagline, body, features (4 items con icon/title/desc), cta_text, hashtags.
-          Responde solo con el YAML, sin explicaciones.")
-      else
-        echo "⚠️  claude no instalado. Usando modo interactivo."
-      fi
-      ;;
-    *)
-      echo "⚠️  IA '$AI_MODE' no reconocida. Opciones: opencode, codex, gemini, claude"
-      ;;
+# ── parse args ──────────────────────────────────────────────
+OVERRIDE_MODE=""
+RESET_MODE=false
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --ai) OVERRIDE_MODE="$2"; shift 2 ;;
+    --ai=*) OVERRIDE_MODE="${1#*=}"; shift ;;
+    --reset-mode) RESET_MODE=true; shift ;;
+    *) echo "Uso: $0 [--ai opencode|codex|gemini|claude] [--reset-mode]"; exit 1 ;;
   esac
+done
 
-  if [ -n "$GENERATED" ]; then
+# ── elegir modo ─────────────────────────────────────────────
+choose_mode() {
+  echo ""
+  echo "🎨 ¿Cómo quieres crear tu post de Instagram?"
+  echo ""
+  echo "  1) Manual — te guío paso a paso con preguntas"
+  echo "  2) opencode — IA local que trabaja con tu código"
+  echo "  3) Gemini CLI — la IA de Google"
+  echo "  4) Codex CLI — la IA de OpenAI para terminal"
+  echo "  5) Claude CLI — la IA de Anthropic"
+  echo ""
+  read -p "Elige (1-5) [1]: " choice
+  choice="${choice:-1}"
+  case "$choice" in
+    1) echo "manual" ;;
+    2) echo "opencode" ;;
+    3) echo "gemini" ;;
+    4) echo "codex" ;;
+    5) echo "claude" ;;
+    *) echo "manual" ;;
+  esac
+}
+
+MODE="$OVERRIDE_MODE"
+if [ -z "$MODE" ]; then
+  if [ "$RESET_MODE" = true ] || [ ! -f "$MODE_FILE" ]; then
     mkdir -p custom
-    echo "$GENERATED" > custom/config.generated.yaml
-    echo "✓ Config generada por IA guardada en custom/config.generated.yaml"
+    MODE=$(choose_mode)
+    echo "$MODE" > "$MODE_FILE"
+    echo "✓ Modo guardado (usa --reset-mode para cambiarlo)"
+  else
+    MODE=$(cat "$MODE_FILE")
   fi
 fi
 
+echo "📋 Modo: $MODE"
+
+# ── dependencias + fuentes ──────────────────────────────────
 if [ ! -d "fonts" ] || [ -z "$(ls -A fonts/ 2>/dev/null)" ]; then
   echo "📥 Descargando fuentes..."
   mkdir -p fonts
@@ -104,10 +78,102 @@ fi
 echo "📦 Verificando dependencias..."
 pip3 install -q --break-system-packages pillow pyyaml requests 2>/dev/null || pip install -q --break-system-packages pillow pyyaml requests 2>/dev/null || pip install -q pillow pyyaml requests
 
-echo "🖼  Generando post..."
+# ── modo manual ────────────────────────────────────────────
+if [ "$MODE" = "manual" ]; then
+  python3 post.py --interactive
+  exit 0
+fi
 
-if [ -n "$AI_MODE" ] && [ -f "custom/config.generated.yaml" ]; then
+# ── modo IA ─────────────────────────────────────────────────
+CONTEXT_FILE="custom/context.md"
+
+# Si no hay contexto, pedirlo
+if [ ! -f "$CONTEXT_FILE" ]; then
+  echo ""
+  echo "📝 Cuéntame sobre tu proyecto:"
+  echo "   (Escribe una descripción libre. Ctrl+D para terminar.)"
+  echo ""
+  mkdir -p custom
+  cat > "$CONTEXT_FILE"
+  echo "✓ Guardado en $CONTEXT_FILE"
+fi
+
+CONTEXT=$(cat "$CONTEXT_FILE")
+echo "🤖 Generando configuración con $MODE..."
+
+# ── prompt base para todas las IAs ─────────────────────────
+BASE_PROMPT="Eres un experto en marketing educativo y redes sociales. Tu tarea es crear la configuración YAML para un post promocional de Instagram a partir de la descripción de un proyecto.
+
+La configuración debe incluir estas claves YAML:
+  - title: título llamativo del post (máximo 40 caracteres)
+  - tagline: frase corta de apoyo (máximo 60 caracteres)
+  - body: texto principal del post, puede usar \n para saltos de línea (máximo 200 caracteres)
+  - features: lista de 4 elementos, cada uno con icon (emoji), title (corto) y desc (una línea)
+  - cta_text: texto del botón de llamada a la acción (una URL o texto corto)
+  - hashtags: cadena con hashtags separados por espacios
+
+Reglas:
+- Tono cercano, inspirador, profesional
+- Los features deben destacar beneficios reales
+- El título debe captar atención
+- Responde ÚNICAMENTE con el YAML, sin explicaciones ni código alrededor
+
+Contexto del proyecto:
+---
+
+$CONTEXT
+
+---
+
+YAML:"
+
+# ── ejecutar según herramienta ──────────────────────────────
+GENERATED=""
+case "$MODE" in
+  opencode)
+    if command -v opencode >/dev/null 2>&1; then
+      GENERATED=$(opencode --prompt "$BASE_PROMPT" 2>/dev/null)
+    else
+      echo "⚠️  opencode no está instalado."
+      echo "   Instálalo con: npm install -g @opencode/cli"
+      echo "   Mientras tanto, entro en modo manual."
+    fi
+    ;;
+  gemini)
+    if command -v gemini >/dev/null 2>&1; then
+      GENERATED=$(gemini --prompt "$BASE_PROMPT" 2>/dev/null)
+    else
+      echo "⚠️  Gemini CLI no está instalado."
+      echo "   Instálalo con: pip install google-generativeai"
+      echo "   Mientras tanto, entro en modo manual."
+    fi
+    ;;
+  codex)
+    if command -v codex >/dev/null 2>&1; then
+      GENERATED=$(codex --prompt "$BASE_PROMPT" 2>/dev/null)
+    else
+      echo "⚠️  Codex CLI no está instalado."
+      echo "   Instálalo con: npm install -g @openai/codex"
+      echo "   Mientras tanto, entro en modo manual."
+    fi
+    ;;
+  claude)
+    if command -v claude >/dev/null 2>&1; then
+      GENERATED=$(claude --prompt "$BASE_PROMPT" 2>/dev/null)
+    else
+      echo "⚠️  Claude CLI no está instalado."
+      echo "   Instálalo con: npm install -g @anthropic-ai/claude"
+      echo "   Mientras tanto, entro en modo manual."
+    fi
+    ;;
+esac
+
+if [ -n "$GENERATED" ]; then
+  mkdir -p custom
+  echo "$GENERATED" > custom/config.generated.yaml
+  echo "✓ Configuración generada por $MODE guardada en custom/config.generated.yaml"
   python3 post.py
 else
+  echo "ℹ️  No se pudo generar con IA. Usando modo manual."
   python3 post.py --interactive
 fi
