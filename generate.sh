@@ -6,9 +6,8 @@ cd "$SCRIPT_DIR"
 
 MODE_FILE="custom/.mode"
 
-command -v python3 >/dev/null 2>&1 || { echo "❌ Necesitas Python 3"; exit 1; }
+command -v python3 >/dev/null 2>&1 || { echo "❌ Necesitas Python 3" >&2; exit 1; }
 
-# ── parse args ──────────────────────────────────────────────
 OVERRIDE_MODE=""
 RESET_MODE=false
 while [[ $# -gt 0 ]]; do
@@ -16,22 +15,21 @@ while [[ $# -gt 0 ]]; do
     --ai) OVERRIDE_MODE="$2"; shift 2 ;;
     --ai=*) OVERRIDE_MODE="${1#*=}"; shift ;;
     --reset-mode) RESET_MODE=true; shift ;;
-    *) echo "Uso: $0 [--ai opencode|codex|gemini|claude] [--reset-mode]"; exit 1 ;;
+    *) echo "Uso: $0 [--ai opencode|codex|gemini|claude] [--reset-mode]" >&2; exit 1 ;;
   esac
 done
 
-# ── elegir modo ─────────────────────────────────────────────
 choose_mode() {
-  echo ""
-  echo "🎨 ¿Cómo quieres crear tu post de Instagram?"
-  echo ""
-  echo "  1) Manual — te guío paso a paso con preguntas"
-  echo "  2) opencode — IA local que trabaja con tu código"
-  echo "  3) Gemini CLI — la IA de Google"
-  echo "  4) Codex CLI — la IA de OpenAI para terminal"
-  echo "  5) Claude CLI — la IA de Anthropic"
-  echo ""
-  read -p "Elige (1-5) [1]: " choice
+  echo "" >&2
+  echo "🎨 ¿Cómo quieres crear tu post de Instagram?" >&2
+  echo "" >&2
+  echo "  1) Manual — te guío paso a paso con preguntas" >&2
+  echo "  2) opencode — IA local que trabaja con tu código" >&2
+  echo "  3) Gemini CLI — la IA de Google" >&2
+  echo "  4) Codex CLI — la IA de OpenAI para terminal" >&2
+  echo "  5) Claude CLI — la IA de Anthropic" >&2
+  echo "" >&2
+  read -p $'\e[1mElige (1-5) [1]:\e[0m ' choice
   choice="${choice:-1}"
   case "$choice" in
     1) echo "manual" ;;
@@ -49,17 +47,16 @@ if [ -z "$MODE" ]; then
     mkdir -p custom
     MODE=$(choose_mode)
     echo "$MODE" > "$MODE_FILE"
-    echo "✓ Modo guardado (usa --reset-mode para cambiarlo)"
+    echo "✓ Modo guardado (usa --reset-mode para cambiarlo)" >&2
   else
     MODE=$(cat "$MODE_FILE")
   fi
 fi
 
-echo "📋 Modo: $MODE"
+echo "📋 Modo: $MODE" >&2
 
-# ── dependencias + fuentes ──────────────────────────────────
 if [ ! -d "fonts" ] || [ -z "$(ls -A fonts/ 2>/dev/null)" ]; then
-  echo "📥 Descargando fuentes..."
+  echo "📥 Descargando fuentes..." >&2
   mkdir -p fonts
   python3 -c "
 import requests, os
@@ -72,36 +69,32 @@ for name, url in fonts.items():
   with open(f'fonts/{name}', 'wb') as f:
     f.write(r.content)
   print(f'  {name} descargado')
-" 2>/dev/null || echo "⚠️  No se pudieron descargar fuentes."
+" 2>/dev/null || echo "⚠️  No se pudieron descargar fuentes." >&2
 fi
 
-echo "📦 Verificando dependencias..."
+echo "📦 Verificando dependencias..." >&2
 pip3 install -q --break-system-packages pillow pyyaml requests 2>/dev/null || pip install -q --break-system-packages pillow pyyaml requests 2>/dev/null || pip install -q pillow pyyaml requests
 
-# ── modo manual ────────────────────────────────────────────
 if [ "$MODE" = "manual" ]; then
   python3 post.py --interactive
   exit 0
 fi
 
-# ── modo IA ─────────────────────────────────────────────────
 CONTEXT_FILE="custom/context.md"
 
-# Si no hay contexto, pedirlo
 if [ ! -f "$CONTEXT_FILE" ]; then
-  echo ""
-  echo "📝 Cuéntame sobre tu proyecto:"
-  echo "   (Escribe una descripción libre. Ctrl+D para terminar.)"
-  echo ""
+  echo "" >&2
+  echo "📝 Cuéntame sobre tu proyecto:" >&2
+  echo "   (Escribe una descripción libre. Ctrl+D para terminar.)" >&2
+  echo "" >&2
   mkdir -p custom
   cat > "$CONTEXT_FILE"
-  echo "✓ Guardado en $CONTEXT_FILE"
+  echo "✓ Guardado en $CONTEXT_FILE" >&2
 fi
 
 CONTEXT=$(cat "$CONTEXT_FILE")
-echo "🤖 Generando configuración con $MODE..."
+echo "🤖 Generando configuración con $MODE..." >&2
 
-# ── prompt base para todas las IAs ─────────────────────────
 BASE_PROMPT="Eres un experto en marketing educativo y redes sociales. Tu tarea es crear la configuración YAML para un post promocional de Instagram a partir de la descripción de un proyecto.
 
 La configuración debe incluir estas claves YAML:
@@ -127,43 +120,38 @@ $CONTEXT
 
 YAML:"
 
-# ── ejecutar según herramienta ──────────────────────────────
 GENERATED=""
 case "$MODE" in
   opencode)
     if command -v opencode >/dev/null 2>&1; then
       GENERATED=$(opencode --prompt "$BASE_PROMPT" 2>/dev/null)
     else
-      echo "⚠️  opencode no está instalado."
-      echo "   Instálalo con: npm install -g @opencode/cli"
-      echo "   Mientras tanto, entro en modo manual."
+      echo "⚠️  opencode no está instalado." >&2
+      echo "   Instálalo con: npm install -g @opencode/cli" >&2
     fi
     ;;
   gemini)
     if command -v gemini >/dev/null 2>&1; then
       GENERATED=$(gemini --prompt "$BASE_PROMPT" 2>/dev/null)
     else
-      echo "⚠️  Gemini CLI no está instalado."
-      echo "   Instálalo con: pip install google-generativeai"
-      echo "   Mientras tanto, entro en modo manual."
+      echo "⚠️  Gemini CLI no está instalado." >&2
+      echo "   Instálalo con: pip install google-generativeai" >&2
     fi
     ;;
   codex)
     if command -v codex >/dev/null 2>&1; then
       GENERATED=$(codex --prompt "$BASE_PROMPT" 2>/dev/null)
     else
-      echo "⚠️  Codex CLI no está instalado."
-      echo "   Instálalo con: npm install -g @openai/codex"
-      echo "   Mientras tanto, entro en modo manual."
+      echo "⚠️  Codex CLI no está instalado." >&2
+      echo "   Instálalo con: npm install -g @openai/codex" >&2
     fi
     ;;
   claude)
     if command -v claude >/dev/null 2>&1; then
       GENERATED=$(claude --prompt "$BASE_PROMPT" 2>/dev/null)
     else
-      echo "⚠️  Claude CLI no está instalado."
-      echo "   Instálalo con: npm install -g @anthropic-ai/claude"
-      echo "   Mientras tanto, entro en modo manual."
+      echo "⚠️  Claude CLI no está instalado." >&2
+      echo "   Instálalo con: npm install -g @anthropic-ai/claude" >&2
     fi
     ;;
 esac
@@ -171,9 +159,9 @@ esac
 if [ -n "$GENERATED" ]; then
   mkdir -p custom
   echo "$GENERATED" > custom/config.generated.yaml
-  echo "✓ Configuración generada por $MODE guardada en custom/config.generated.yaml"
+  echo "✓ Configuración generada por $MODE guardada en custom/config.generated.yaml" >&2
   python3 post.py
 else
-  echo "ℹ️  No se pudo generar con IA. Usando modo manual."
+  echo "ℹ️  No se pudo generar con IA. Usando modo manual." >&2
   python3 post.py --interactive
 fi

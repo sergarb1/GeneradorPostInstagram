@@ -31,7 +31,7 @@ for name, url in fonts.items():
 echo 📦 Instalando dependencias...
 pip install -q --break-system-packages pillow pyyaml requests
 
-:menu
+rem ── elegir modo ──────────────────────────────────────────────
 if not exist "%MODE_FILE%" (
     echo.
     echo 🎨 ¿Cómo quieres crear tu post de Instagram?
