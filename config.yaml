@@ -36,5 +36,6 @@ fonts:
   body: "Outfit-Regular.ttf"
   bold: "Outfit-Bold.ttf"
 
+background: null
 logo: null
 output: "output/post.png"

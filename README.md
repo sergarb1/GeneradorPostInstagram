@@ -59,7 +59,17 @@ Y ejecuta:
 
 La IA lee el contexto, genera el `config.yaml` automáticamente y produce el post.
 
-### 3. Personalización avanzada
+### 3. Layout personalizado (IA de imágenes)
+
+Genera un fondo con DALL·E, Midjourney o cualquier IA y úsalo de base:
+
+```yaml
+background: "custom/mi_layout.png"
+```
+
+Coloca la imagen en `custom/` (gitignored), el texto se superpone automáticamente.
+
+### 4. Personalización avanzada
 
 La carpeta `custom/` (gitignored) puede contener:
 
@@ -68,6 +78,8 @@ La carpeta `custom/` (gitignored) puede contener:
 | `custom/context.md` | Descripción del proyecto para la IA |
 | `custom/logo.png` | Logo que aparece en el post |
 | `custom/config.local.yaml` | Sobreescribe valores de `config.yaml` |
+| `custom/config.generated.yaml` | Config generada por el modo interactivo o IA |
+| `custom/mi_layout.png` | Imagen de fondo generada por IA (DALL·E, Midjourney...) |
 
 ---
 
@@ -142,7 +154,9 @@ GeneradorPostInstagram/
 ├── custom/              # GITIGNORED — datos del usuario
 │   ├── context.md       # Contexto para IA
 │   ├── logo.png         # Logo personalizado
-│   └── config.local.yaml
+│   ├── config.local.yaml# Override manual de config.yaml
+│   ├── config.generated.yaml  # Generado por --interactive o IA
+│   └── layout.png       # Fondo generado por IA de imágenes
 ├── output/              # GITIGNORED — posts generados
 ├── fonts/               # GITIGNORED — fuentes descargadas
 ├── AGENTS.md            # Guía para asistentes IA

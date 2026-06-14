@@ -57,6 +57,46 @@
       </div>
     </section>
 
+    <!-- Layout personalizado -->
+    <section class="mb-16 bg-white/5 backdrop-blur rounded-3xl p-8 md:p-12 border border-white/10">
+      <h2 class="text-3xl font-black mb-8 text-center">🎨 Layout con IA de imágenes</h2>
+      <div class="grid md:grid-cols-2 gap-8 items-center">
+        <div>
+          <p class="text-slate-300 leading-relaxed mb-4">
+            Puedes usar una imagen generada por <strong class="text-white">DALL·E, Midjourney, Stable Diffusion</strong>
+            o cualquier IA de imágenes como fondo del post.
+          </p>
+          <ol class="space-y-3 text-slate-300">
+            <li class="flex items-start gap-3">
+              <span class="text-indigo-400 mt-0.5 shrink-0 font-bold">1.</span>
+              <span>Genera un fondo 1080×1080 con la IA que prefieras</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-indigo-400 mt-0.5 shrink-0 font-bold">2.</span>
+              <span>Guárdalo en <code class="text-indigo-300">custom/layout.png</code></span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-indigo-400 mt-0.5 shrink-0 font-bold">3.</span>
+              <span>Añade al config: <code class="text-indigo-300">background: "custom/layout.png"</code></span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-indigo-400 mt-0.5 shrink-0 font-bold">4.</span>
+              <span>El texto se superpone automáticamente</span>
+            </li>
+          </ol>
+        </div>
+        <div class="bg-slate-800/50 rounded-2xl p-6 border border-slate-700/50">
+          <p class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-3">Ejemplo config.yaml</p>
+          <pre class="text-sm text-slate-300 leading-relaxed font-mono">title: "Mi Proyecto"
+tagline: "Una descripción breve"
+background: "custom/layout.png"
+colors:
+  primary: "#16a34a"
+  primary_dark: "#14532d"</pre>
+        </div>
+      </div>
+    </section>
+
     <!-- IA Support -->
     <section class="mb-16 bg-white/5 backdrop-blur rounded-3xl p-8 md:p-12 border border-white/10">
       <h2 class="text-3xl font-black mb-8 text-center">🤖 Soporte para IA</h2>
@@ -166,7 +206,10 @@ Valores: gratuito, colaborativo, código abierto.</pre>
         ├── <span class="text-red-400">custom/</span>                Tus datos <span class="text-slate-500">(gitignored)</span><br/>
         │   ├── context.md       Contexto para IA<br/>
         │   ├── logo.png         Logo personalizado<br/>
-        │   └── config.local.yaml<br/>
+        │   ├── config.local.yaml<br/>
+        │   ├── config.generated.yaml  Generado por el script<br/>
+        │   ├── layout.png       Fondo de IA de imágenes<br/>
+        │   └── prompt.md        Prompt preparado para IA<br/>
         ├── <span class="text-red-400">output/</span>                Posts generados <span class="text-slate-500">(gitignored)</span><br/>
         ├── <span class="text-green-400">AGENTS.md</span>            Guía para asistentes IA<br/>
         └── <span class="text-green-400">LICENSE</span>               AGPL v3

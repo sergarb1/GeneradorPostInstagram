@@ -27,7 +27,9 @@ GeneradorPostInstagram/
 ├── custom/              # GITIGNORED — datos del usuario
 │   ├── context.md       # Contexto del proyecto para IA
 │   ├── logo.png         # Logo personalizado
-│   └── config.local.yaml# Sobreescribe config.yaml
+│   ├── config.local.yaml# Sobreescribe config.yaml
+│   ├── config.generated.yaml  # Generado por --interactive o IA
+│   └── layout.png       # Fondo generado por IA de imágenes
 ├── output/              # GITIGNORED — posts generados
 ├── fonts/               # GITIGNORED — fuentes descargadas
 ├── AGENTS.md
