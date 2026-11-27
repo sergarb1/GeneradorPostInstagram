@@ -10,6 +10,8 @@ command -v python3 >/dev/null 2>&1 || { echo "❌ Necesitas Python 3" >&2; exit 
 
 SET_MODE=""
 OVERRIDE_MODE=""
+EXTRA_ARGS=()
+
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --ai) OVERRIDE_MODE="$2"; shift 2 ;;
@@ -17,12 +19,17 @@ while [[ $# -gt 0 ]]; do
     --modo) SET_MODE="$2"; shift 2 ;;
     --modo=*) SET_MODE="${1#*=}"; shift ;;
     -m) SET_MODE="$2"; shift 2 ;;
-    *) echo "Uso: $0 [--ai opencode|codex|gemini|claude] [--modo manual|opencode|gemini|codex|claude]" >&2; exit 1 ;;
+    --stock) EXTRA_ARGS+=("--stock" "$2"); shift 2 ;;
+    --layout) EXTRA_ARGS+=("--layout" "$2"); shift 2 ;;
+    --diagram) EXTRA_ARGS+=("--diagram" "$2"); shift 2 ;;
+    --aspect) EXTRA_ARGS+=("--aspect" "$2"); shift 2 ;;
+    --anti-slop|--lint) python3 anti_slop.py config.yaml; exit 0 ;;
+    *) EXTRA_ARGS+=("$1"); shift ;;
   esac
 done
 
-# Validar modo
-VALID_MODES="manual opencode gemini codex claude"
+# Validar modo de asistente
+VALID_MODES="manual opencode freebuff antigravity gemini codex claude"
 validate_mode() {
   for m in $VALID_MODES; do
     [ "$m" = "$1" ] && return 0
@@ -32,26 +39,30 @@ validate_mode() {
 
 choose_mode() {
   echo "" >&2
-  echo "🎨 ¿Cómo quieres crear tu post de Instagram?" >&2
+  echo "🎨 ¿Cómo quieres generar tu post de Instagram?" >&2
   echo "" >&2
-  echo "  1) Manual — te guío paso a paso con preguntas" >&2
-  echo "  2) opencode — IA conversacional (te entrevista y genera el post)" >&2
-  echo "  3) Gemini CLI — IA de Google" >&2
-  echo "  4) Codex CLI — IA de OpenAI" >&2
-  echo "  5) Claude CLI — IA de Anthropic" >&2
+  echo "  1) Manual / Directo — Renderiza desde config.yaml con opciones CLI" >&2
+  echo "  2) opencode — Asistente de IA de terminal" >&2
+  echo "  3) freebuff — Asistente de IA libre para desarrollo" >&2
+  echo "  4) Antigravity — Pair programmer / IDE Agent de Google DeepMind" >&2
+  echo "  5) Gemini CLI — IA de Google" >&2
+  echo "  6) Codex CLI — IA de OpenAI" >&2
+  echo "  7) Claude CLI — IA de Anthropic" >&2
   echo "" >&2
-  read -p $'\e[1mElige (1-5) [1]:\e[0m ' choice
+  read -p $'\e[1mElige (1-7) [1]:\e[0m ' choice
   choice="${choice:-1}"
   case "$choice" in
     2) echo "opencode" ;;
-    3) echo "gemini" ;;
-    4) echo "codex" ;;
-    5) echo "claude" ;;
+    3) echo "freebuff" ;;
+    4) echo "antigravity" ;;
+    5) echo "gemini" ;;
+    6) echo "codex" ;;
+    7) echo "claude" ;;
     *) echo "manual" ;;
   esac
 }
 
-# --modo establece y guarda el modo permanentemente
+# Guardar modo predeterminado
 if [ -n "$SET_MODE" ]; then
   if validate_mode "$SET_MODE"; then
     mkdir -p custom
@@ -60,7 +71,7 @@ if [ -n "$SET_MODE" ]; then
     exit 0
   else
     echo "❌ Modo inválido: $SET_MODE" >&2
-    echo "   Válidos: manual, opencode, gemini, codex, claude" >&2
+    echo "   Válidos: manual, opencode, freebuff, antigravity, gemini, codex, claude" >&2
     exit 1
   fi
 fi
@@ -77,43 +88,55 @@ if [ -z "$MODE" ]; then
   fi
 fi
 
-echo "📋 Modo: $MODE    (cambia con: --modo manual|opencode|gemini|codex|claude)" >&2
+echo "📋 Modo: $MODE    (cambia con: --modo manual|opencode|freebuff|antigravity|gemini|claude)" >&2
 
-# ── fuentes + deps ────────────────────────────────────────
-if [ ! -d "fonts" ] || [ -z "$(ls -A fonts/ 2>/dev/null)" ]; then
-  echo "📥 Descargando fuentes..." >&2
+# ── Fuentes + Verificación ─────────────────────────────────
+if [ ! -d "fonts" ] || [ ! -f "fonts/Outfit-Bold.ttf" ]; then
+  echo "📥 Descargando fuentes tipográficas (Outfit Bold / Regular)..." >&2
   mkdir -p fonts
   python3 -c "
-import requests, os
+import urllib.request, os
 fonts = {
   'Outfit-Bold.ttf': 'https://fonts.gstatic.com/s/outfit/v15/QGYyz_MVcBeNP4NjuGObqx1XmO1I4deyC4E.ttf',
   'Outfit-Regular.ttf': 'https://fonts.gstatic.com/s/outfit/v15/QGYyz_MVcBeNP4NjuGObqx1XmO1I4TC1C4E.ttf',
 }
 for name, url in fonts.items():
-  r = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
-  with open('fonts/' + name, 'wb') as f:
-    f.write(r.content)
-  print(f'  {name} descargado')
-" 2>/dev/null || echo "⚠️  No se pudieron descargar fuentes." >&2
+  p = os.path.join('fonts', name)
+  if not os.path.exists(p):
+    req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+    with urllib.request.urlopen(req, timeout=10) as resp:
+      with open(p, 'wb') as f:
+        f.write(resp.read())
+    print(f'  ✓ {name} descargado')
+" 2>/dev/null || echo "⚠️  No se pudieron descargar fuentes de Google. Se usarán fuentes del sistema." >&2
 fi
 
-echo "📦 Verificando dependencias..." >&2
-pip3 install -q --break-system-packages pillow pyyaml requests 2>/dev/null || pip install -q --break-system-packages pillow pyyaml requests 2>/dev/null || pip install -q pillow pyyaml requests
-
-# ── modo manual ──────────────────────────────────────────
+# ── Modo Directo / Manual ─────────────────────────────────
 if [ "$MODE" = "manual" ]; then
-  python3 post.py --interactive
+  python3 post.py "${EXTRA_ARGS[@]}"
   exit 0
 fi
 
-# ── modo IA ──────────────────────────────────────────────
+# ── Modo Antigravity ──────────────────────────────────────
+if [ "$MODE" = "antigravity" ]; then
+  echo "" >&2
+  echo "🚀 [Antigravity Mode]" >&2
+  echo "Estás en el entorno de Antigravity. Pídele directamente en el chat:" >&2
+  echo "  - 'Crea un post para Instagram sobre X con layout diagram y mi logo'" >&2
+  echo "  - 'Busca una foto libre en Openverse sobre educación y ponle texto'" >&2
+  echo "  - 'Revisa que el copy cumpla las reglas Anti-IA Slop'" >&2
+  echo "" >&2
+  python3 post.py "${EXTRA_ARGS[@]}"
+  exit 0
+fi
+
+# ── Modo IA (opencode, freebuff, gemini, claude, codex) ────
 CONTEXT_FILE="custom/context.md"
 PROMPT_FILE="custom/prompt.md"
 
-# Pedir contexto si no existe
 if [ ! -f "$CONTEXT_FILE" ]; then
   echo "" >&2
-  echo "📝 Describe tu proyecto (luego Ctrl+D):" >&2
+  echo "📝 Describe tu proyecto o el objetivo del post (luego Ctrl+D):" >&2
   echo "" >&2
   mkdir -p custom
   cat > "$CONTEXT_FILE"
@@ -122,60 +145,67 @@ fi
 
 CONTEXT=$(cat "$CONTEXT_FILE")
 
-# Generar prompt para la IA
+# Generar prompt riguroso con reglas Anti-IA Slop
 cat > "$PROMPT_FILE" << PROMPTEND
-Eres un asistente experto en marketing educativo. Tu tarea es crear un post promocional para Instagram.
+Eres un director de arte y redactor publicitario de élite. Tu objetivo es generar el archivo de configuración YAML para un post de Instagram de alto impacto.
 
-Tu objetivo es entrevistar al usuario para obtener la información necesaria y luego generar el archivo YAML de configuración.
+REGLAS ESTRICTAS ANTI-IA SLOP (OBLIGATORIAS):
+1. PROHIBIDO usar lenguaje publicitario inflado o clichés de IA:
+   - NO uses: "revoluciona", "en el vertiginoso mundo", "en la era digital", "desbloquea el poder", "un mundo de posibilidades", "sin precedentes", "de vanguardia", "game-changer", "delve", "tapestry".
+2. Sé directo, conciso, humano y específico. Usa verbos enérgicos y hechos demostrables.
+3. Elige el layout visual idóneo según el caso:
+   - 'card': si hay 3 o 4 características destacadas.
+   - 'diagram': si hay una arquitectura o esquema técnico (con Excalidraw).
+   - 'minimal': para reflexiones profundas o lemas contundentes con diseño suizo.
+   - 'split': si hay una imagen/diagrama protagonista arriba y texto abajo.
+   - 'quote': para testimonios o citas memorables.
+4. Si buscas foto de fondo libre de derechos (Openverse), añade la clave 'stock: { query: "...", overlay: "dark" }'.
+5. Responde ÚNICAMENTE con el bloque YAML válido, sin introducciones ni despedidas.
 
-IMPORTANTE: Debes mantener una conversación natural. Pregunta una cosa a la vez.
-Cuando tengas toda la información, responde ÚNICAMENTE con el YAML (sin explicaciones ni código alrededor).
+ESTRUCTURA DEL YAML ESPERADO:
+title: "Título contundente (máx 40 caracteres)"
+tagline: "Subtítulo claro que aporte contexto (máx 60 caracteres)"
+category: "TEMA EN MAYÚSCULAS"
+body: "Cuerpo del mensaje conciso, 2 o 3 líneas con información real."
+features: # Solo si usas layout 'card' o 'split'
+  - icon: "🎯"
+    title: "Punto 1"
+    desc: "Descripción concreta"
+cta_text: "tuweb.es o enlace corto"
+hashtags: "#Tema1 #Tema2 #Tema3"
+layout: "card" # card | diagram | minimal | split | quote
+aspect: "1:1"  # 1:1 o 4:5
+colors:
+  primary: "#hex"
+  primary_dark: "#hex"
+  gradient_top: "#hex"
+  gradient_bottom: "#hex"
 
-El YAML debe tener esta estructura:
-- title: título llamativo (máx. 40 caracteres)
-- tagline: frase corta de apoyo (máx. 60)
-- body: texto principal con \n para saltos (máx. 200)
-- features: 4 elementos con icon (emoji), title, desc
-- cta_text: texto del botón (URL o texto corto)
-- hashtags: separados por espacios
-
-Contexto del proyecto del usuario:
+Contexto del proyecto:
 ---
 $CONTEXT
 ---
-
-Empieza la conversación. Saluda al usuario y pregunta qué proyecto quiere promocionar.
 PROMPTEND
 
 echo "" >&2
-echo "✅ Prompt preparado en $PROMPT_FILE" >&2
-echo "" >&2
+echo "✅ Prompt Anti-IA Slop generado en $PROMPT_FILE" >&2
 
-echo "📤 Pasa este prompt a la IA que quieras usar:" >&2
-echo "" >&2
-echo "   cat $PROMPT_FILE | $MODE" >&2
-echo "" >&2
-echo "   O copia el contenido de $PROMPT_FILE y pégalo en tu IA favorita." >&2
-echo "" >&2
-echo "💡 La IA te hará preguntas. Cuando termine, te dará un YAML." >&2
-echo "   Guárdalo en custom/config.generated.yaml y ejecuta:" >&2
-echo "   python3 post.py" >&2
-echo "" >&2
-
-# Si la herramienta está instalada, ofrecer lanzarla
-if command -v "$MODE" >/dev/null 2>&1; then
-  echo "🔗 $MODE detectado. ¿Quieres lanzarlo ahora? [s/N]: " >&2
-  read -r launch
-  if [ "$launch" = "s" ] || [ "$launch" = "S" ]; then
-    echo "" >&2
-    echo "🤖 Ejecutando $MODE..." >&2
-    echo "   La IA leerá el prompt y te hará preguntas." >&2
-    echo "   Cuando termine, el YAML aparecerá en pantalla." >&2
-    echo "   Cópialo a custom/config.generated.yaml" >&2
-    echo "" >&2
-    # Enviar prompt primero, luego conectar stdin para la conversación
-    (cat "$PROMPT_FILE"; cat) | "$MODE"
-    echo "" >&2
-    echo "💡 ¿Te dio la IA el YAML? Pégalo en custom/config.generated.yaml" >&2
-  fi
+# Si la herramienta está disponible, ejecutarla
+if [ "$MODE" = "freebuff" ] && command -v freebuff >/dev/null 2>&1; then
+  echo "🤖 Ejecutando Freebuff..." >&2
+  freebuff --trust-agents
+  exit 0
+elif [ "$MODE" = "opencode" ] && command -v opencode >/dev/null 2>&1; then
+  echo "🤖 Ejecutando OpenCode..." >&2
+  opencode run "Lee custom/prompt.md y genera custom/config.generated.yaml siguiendo las reglas Anti-IA Slop."
+  python3 post.py "${EXTRA_ARGS[@]}"
+  exit 0
+elif command -v "$MODE" >/dev/null 2>&1; then
+  echo "🤖 Ejecutando $MODE..." >&2
+  (cat "$PROMPT_FILE"; cat) | "$MODE"
+else
+  echo "" >&2
+  echo "💡 Copia $PROMPT_FILE en tu asistente IA preferido ($MODE)." >&2
+  echo "   Guarda la salida en custom/config.generated.yaml y ejecuta:" >&2
+  echo "   python3 post.py" >&2
 fi

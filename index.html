@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GeneradorPostInstagram — Crea posts promocionales con o sin IA</title>
+  <title>GeneradorPostInstagram 2.0 — Diseñado para Creadores y Agentes de IA</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
@@ -17,209 +17,112 @@
     <!-- Hero -->
     <header class="text-center mb-16 md:mb-24">
       <div class="inline-flex items-center gap-2 bg-indigo-500/10 text-indigo-300 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border border-indigo-500/20 mb-6">
-        Código abierto · AGPL v3
+        GeneradorPostInstagram 2.0 · AGPL v3
       </div>
       <h1 class="text-5xl md:text-7xl font-black leading-[1.05] tracking-tight mb-6">
         Generador<span class="text-indigo-400">Post</span>Instagram
       </h1>
       <p class="text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto leading-relaxed font-medium">
-        Crea imágenes promocionales para Instagram desde tu terminal.<br />
-        Funciona solo o con apoyo de <strong class="text-indigo-300">opencode</strong>,
-        <strong class="text-indigo-300">Gemini CLI</strong>, <strong class="text-indigo-300">Codex</strong>
-        o <strong class="text-indigo-300">Claude</strong>.
+        Crea imágenes promocionales para Instagram desde tu terminal o con agentes de IA.<br />
+        Integrado con <strong class="text-indigo-300">Antigravity</strong>,
+        <strong class="text-indigo-300">OpenCode</strong>, <strong class="text-indigo-300">Freebuff</strong>,
+        <strong class="text-indigo-300">Excalidraw</strong> y <strong class="text-indigo-300">Openverse</strong>.
       </p>
       <div class="flex flex-wrap justify-center gap-3 mt-8">
-        <span class="inline-flex items-center gap-1.5 bg-green-500/10 text-green-300 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border border-green-500/20">🐍 Python + Pillow</span>
-        <span class="inline-flex items-center gap-1.5 bg-purple-500/10 text-purple-300 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border border-purple-500/20">🤖 IA opcional</span>
-        <span class="inline-flex items-center gap-1.5 bg-amber-500/10 text-amber-300 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border border-amber-500/20">📸 1080×1080</span>
+        <span class="inline-flex items-center gap-1.5 bg-green-500/10 text-green-300 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border border-green-500/20">📐 Excalidraw SVG</span>
+        <span class="inline-flex items-center gap-1.5 bg-blue-500/10 text-blue-300 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border border-blue-500/20">📸 Openverse Libre</span>
+        <span class="inline-flex items-center gap-1.5 bg-amber-500/10 text-amber-300 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border border-amber-500/20">🛡️ Anti-IA Slop</span>
+        <span class="inline-flex items-center gap-1.5 bg-purple-500/10 text-purple-300 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border border-purple-500/20">🤖 Agent-First</span>
       </div>
     </header>
 
-    <!-- Cómo funciona -->
+    <!-- 4 Pilares -->
     <section class="mb-16">
-      <h2 class="text-3xl font-black text-center mb-10">⚡ Cómo funciona</h2>
-      <div class="grid md:grid-cols-3 gap-6">
-        <div class="bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10 hover:border-indigo-500/30 transition">
-          <div class="text-4xl mb-4">📝</div>
-          <h3 class="text-xl font-bold mb-3">1. Configuras</h3>
-          <p class="text-slate-400 leading-relaxed">Editas <code class="text-indigo-300 text-sm">config.yaml</code> con tu título, colores, features y mensaje. O dejas los valores genéricos de ejemplo.</p>
+      <h2 class="text-3xl font-black text-center mb-10">⚡ Novedades de la Versión 2.0</h2>
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white/5 backdrop-blur rounded-3xl p-6 border border-white/10 hover:border-indigo-500/30 transition">
+          <div class="text-3xl mb-3">📸</div>
+          <h3 class="text-lg font-bold mb-2">Bancos de Fotos Libres</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">Conexión directa con Openverse y Wikimedia Commons. Descarga fondos CC con auto-scrim para garantizar contraste.</p>
         </div>
-        <div class="bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10 hover:border-indigo-500/30 transition">
-          <div class="text-4xl mb-4">🤖</div>
-          <h3 class="text-xl font-bold mb-3">2. (Opcional) IA</h3>
-          <p class="text-slate-400 leading-relaxed">Escribes tu contexto en <code class="text-indigo-300 text-sm">custom/context.md</code> y ejecutas <code class="text-indigo-300 text-sm">generate.sh --ai opencode</code>. La IA genera el contenido del post automáticamente.</p>
+        <div class="bg-white/5 backdrop-blur rounded-3xl p-6 border border-white/10 hover:border-indigo-500/30 transition">
+          <div class="text-3xl mb-3">📐</div>
+          <h3 class="text-lg font-bold mb-2">Diagramas Excalidraw</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">Renderizado vectorial nítido (SVG/PNG con CairoSVG) de diagramas de arquitectura en un contenedor blueprint.</p>
         </div>
-        <div class="bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10 hover:border-indigo-500/30 transition">
-          <div class="text-4xl mb-4">🖼️</div>
-          <h3 class="text-xl font-bold mb-3">3. Generas</h3>
-          <p class="text-slate-400 leading-relaxed">Ejecutas <code class="text-indigo-300 text-sm">./generate.sh</code> y obtienes un PNG 1080×1080 listo para Instagram en <code class="text-indigo-300 text-sm">output/post.png</code>.</p>
+        <div class="bg-white/5 backdrop-blur rounded-3xl p-6 border border-white/10 hover:border-indigo-500/30 transition">
+          <div class="text-3xl mb-3">🛡️</div>
+          <h3 class="text-lg font-bold mb-2">Motor Anti-IA Slop</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">Linter de copy que detecta clichés vacíos de IA, evita exceso de emojis y promueve diseño honesto y limpio.</p>
+        </div>
+        <div class="bg-white/5 backdrop-blur rounded-3xl p-6 border border-white/10 hover:border-indigo-500/30 transition">
+          <div class="text-3xl mb-3">🏷️</div>
+          <h3 class="text-lg font-bold mb-2">Logos de Marca</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">Soporte SVG/PNG, pastilla protectora de cristal esmerilado y auto-extracción de la paleta corporativa.</p>
         </div>
       </div>
     </section>
 
-    <!-- Layout personalizado -->
+    <!-- Galería de Layouts -->
     <section class="mb-16 bg-white/5 backdrop-blur rounded-3xl p-8 md:p-12 border border-white/10">
-      <h2 class="text-3xl font-black mb-8 text-center">🎨 Layout con IA de imágenes</h2>
+      <h2 class="text-3xl font-black mb-8 text-center">🎨 5 Layouts Especializados</h2>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="bg-slate-900/60 p-5 rounded-2xl border border-slate-700/60">
+          <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider">Layout 1</span>
+          <h4 class="text-lg font-bold text-white mt-1 mb-2">Card Clásico</h4>
+          <p class="text-slate-400 text-xs leading-relaxed">Tarjeta flotante con glassmorphism, chips de categoría y lista de puntos clave. Ideal para cursos y servicios.</p>
+        </div>
+        <div class="bg-slate-900/60 p-5 rounded-2xl border border-slate-700/60">
+          <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider">Layout 2</span>
+          <h4 class="text-lg font-bold text-white mt-1 mb-2">Excalidraw Blueprint</h4>
+          <p class="text-slate-400 text-xs leading-relaxed">Marco técnico central con botones de ventana para flujos, arquitecturas de software y bocetos técnicos.</p>
+        </div>
+        <div class="bg-slate-900/60 p-5 rounded-2xl border border-slate-700/60">
+          <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider">Layout 3</span>
+          <h4 class="text-lg font-bold text-white mt-1 mb-2">Swiss Minimal (4:5)</h4>
+          <p class="text-slate-400 text-xs leading-relaxed">Estilo editorial de alto impacto con tipografía dominante y generoso espacio blanco en formato feed vertical.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Agent First -->
+    <section class="mb-16 bg-white/5 backdrop-blur rounded-3xl p-8 md:p-12 border border-white/10">
+      <h2 class="text-3xl font-black mb-8 text-center">🤖 Flujo Agent-First</h2>
       <div class="grid md:grid-cols-2 gap-8 items-center">
         <div>
           <p class="text-slate-300 leading-relaxed mb-4">
-            Puedes usar una imagen generada por <strong class="text-white">DALL·E, Midjourney, Stable Diffusion</strong>
-            o cualquier IA de imágenes como fondo del post.
+            No pierdas tiempo con formularios rígidos. Pídele directamente a <strong class="text-indigo-300">Antigravity</strong>,
+            <strong class="text-indigo-300">OpenCode</strong> o <strong class="text-indigo-300">Freebuff</strong>:
           </p>
-          <ol class="space-y-3 text-slate-300">
-            <li class="flex items-start gap-3">
-              <span class="text-indigo-400 mt-0.5 shrink-0 font-bold">1.</span>
-              <span>Genera un fondo 1080×1080 con la IA que prefieras</span>
+          <ul class="space-y-3 text-slate-300 text-sm">
+            <li class="flex items-start gap-2">
+              <span class="text-green-400">✔</span>
+              <span>"Crea un post anunciando mi nuevo proyecto con layout diagram y mi logo"</span>
             </li>
-            <li class="flex items-start gap-3">
-              <span class="text-indigo-400 mt-0.5 shrink-0 font-bold">2.</span>
-              <span>Guárdalo en <code class="text-indigo-300">custom/layout.png</code></span>
+            <li class="flex items-start gap-2">
+              <span class="text-green-400">✔</span>
+              <span>"Busca en Openverse una foto sobre educación y ponle un título contundente"</span>
             </li>
-            <li class="flex items-start gap-3">
-              <span class="text-indigo-400 mt-0.5 shrink-0 font-bold">3.</span>
-              <span>Añade al config: <code class="text-indigo-300">background: "custom/layout.png"</code></span>
-            </li>
-            <li class="flex items-start gap-3">
-              <span class="text-indigo-400 mt-0.5 shrink-0 font-bold">4.</span>
-              <span>El texto se superpone automáticamente</span>
-            </li>
-          </ol>
-        </div>
-        <div class="bg-slate-800/50 rounded-2xl p-6 border border-slate-700/50">
-          <p class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-3">Ejemplo config.yaml</p>
-          <pre class="text-sm text-slate-300 leading-relaxed font-mono">title: "Mi Proyecto"
-tagline: "Una descripción breve"
-background: "custom/layout.png"
-colors:
-  primary: "#16a34a"
-  primary_dark: "#14532d"</pre>
-        </div>
-      </div>
-    </section>
-
-    <!-- IA Support -->
-    <section class="mb-16 bg-white/5 backdrop-blur rounded-3xl p-8 md:p-12 border border-white/10">
-      <h2 class="text-3xl font-black mb-8 text-center">🤖 Soporte para IA</h2>
-      <div class="grid md:grid-cols-2 gap-8">
-        <div>
-          <p class="text-slate-300 leading-relaxed mb-6">
-            El generador funciona <strong>sin IA</strong> con solo editar <code class="text-indigo-300">config.yaml</code>.
-            Pero si tienes una herramienta de IA instalada, puedes usarla para generar el contenido del post
-            automáticamente a partir de una descripción de tu proyecto.
-          </p>
-          <ul class="space-y-3">
-            <li class="flex items-start gap-3">
-              <span class="text-indigo-400 mt-0.5">▸</span>
-              <div><strong class="text-white">opencode</strong> <span class="text-slate-400">—</span> <code class="text-indigo-300 text-sm">generate.sh --ai opencode</code></div>
-            </li>
-            <li class="flex items-start gap-3">
-              <span class="text-indigo-400 mt-0.5">▸</span>
-              <div><strong class="text-white">Gemini CLI</strong> <span class="text-slate-400">—</span> <code class="text-indigo-300 text-sm">generate.sh --ai gemini</code></div>
-            </li>
-            <li class="flex items-start gap-3">
-              <span class="text-indigo-400 mt-0.5">▸</span>
-              <div><strong class="text-white">OpenAI Codex CLI</strong> <span class="text-slate-400">—</span> <code class="text-indigo-300 text-sm">generate.sh --ai codex</code></div>
-            </li>
-            <li class="flex items-start gap-3">
-              <span class="text-indigo-400 mt-0.5">▸</span>
-              <div><strong class="text-white">Claude CLI</strong> <span class="text-slate-400">—</span> <code class="text-indigo-300 text-sm">generate.sh --ai claude</code></div>
+            <li class="flex items-start gap-2">
+              <span class="text-green-400">✔</span>
+              <span>"Pasa el linter anti-slop para verificar que el texto sea honesto y directo"</span>
             </li>
           </ul>
         </div>
-        <div class="bg-slate-800/50 rounded-2xl p-6 border border-slate-700/50">
-          <p class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-3">Ejemplo context.md</p>
-          <pre class="text-sm text-slate-300 leading-relaxed font-mono"># Mi Proyecto
-App educativa gratuita para docentes.
-Público: profesores de secundaria.
-Tono: cercano e inspirador.
-Valores: gratuito, colaborativo, código abierto.</pre>
-          <p class="text-xs text-slate-500 mt-3">La IA lee esto y genera el config.yaml automáticamente.</p>
+        <div class="bg-slate-900/80 rounded-2xl p-6 border border-slate-700/80 font-mono text-sm">
+          <div class="text-slate-500 mb-2"># Ejecución directa por CLI</div>
+          <div class="text-indigo-400 mb-1">./generate.sh --stock "nature clean" --layout split</div>
+          <div class="text-slate-500 my-2"># Con tu asistente favorito</div>
+          <div class="text-indigo-400 mb-1">./generate.sh --ai freebuff</div>
+          <div class="text-indigo-400">./generate.sh --ai opencode</div>
         </div>
-      </div>
-    </section>
-
-    <!-- Quick start -->
-    <section class="mb-16">
-      <h2 class="text-3xl font-black text-center mb-10">🚀 Inicio rápido</h2>
-      <div class="bg-slate-800/50 rounded-2xl p-6 md:p-8 border border-slate-700/50 font-mono text-sm">
-        <div class="text-green-400 mb-2"># Clonar</div>
-        <div class="text-slate-300 mb-4">git clone https://github.com/sergarb1/GeneradorPostInstagram.git<br/>cd GeneradorPostInstagram</div>
-        <div class="text-green-400 mb-2"># Generar (sin IA)</div>
-        <div class="text-slate-300 mb-4">./generate.sh</div>
-        <div class="text-green-400 mb-2"># O con IA (necesitas opencode instalado)</div>
-        <div class="text-slate-300">echo "Mi proyecto mola" > custom/context.md<br/>./generate.sh --ai opencode</div>
-      </div>
-    </section>
-
-    <!-- Requisitos -->
-    <section class="mb-16">
-      <h2 class="text-3xl font-black text-center mb-10">📋 Requisitos</h2>
-      <div class="grid md:grid-cols-2 gap-6">
-        <div class="bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10">
-          <h3 class="text-xl font-bold mb-4">Programas necesarios</h3>
-          <ul class="space-y-4 text-slate-300">
-            <li class="flex items-start gap-3">
-              <span class="text-green-400 mt-0.5 shrink-0">▸</span>
-              <div><strong class="text-white">Python 3.8+</strong> — <code class="text-indigo-300 text-sm">sudo apt install python3 python3-pip</code> (Linux), <code class="text-indigo-300 text-sm">brew install python</code> (Mac), o <a href="https://python.org" class="text-indigo-400 hover:underline">python.org</a></div>
-            </li>
-            <li class="flex items-start gap-3">
-              <span class="text-green-400 mt-0.5 shrink-0">▸</span>
-              <div><strong class="text-white">pip</strong> — Viene con Python 3.4+. Si falta: <code class="text-indigo-300 text-sm">python3 -m ensurepip --upgrade</code></div>
-            </li>
-            <li class="flex items-start gap-3">
-              <span class="text-green-400 mt-0.5 shrink-0">▸</span>
-              <div><strong class="text-white">Git</strong> — <code class="text-indigo-300 text-sm">sudo apt install git</code> (Linux), <code class="text-indigo-300 text-sm">brew install git</code> (Mac), o <a href="https://git-scm.com" class="text-indigo-400 hover:underline">git-scm.com</a></div>
-            </li>
-          </ul>
-          <p class="text-slate-400 text-sm mt-4">Verifica: <code class="text-indigo-300">python3 --version && pip --version && git --version</code></p>
-        </div>
-        <div class="bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10">
-          <h3 class="text-xl font-bold mb-4">Dependencias Python</h3>
-          <div class="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50 font-mono text-sm mb-6">
-            <div class="text-green-400 mb-1"># Con requirements.txt</div>
-            <div class="text-slate-300">pip install -r requirements.txt</div>
-          </div>
-          <h4 class="font-bold text-white mb-2">Opcional — CLIs de IA</h4>
-          <ul class="space-y-2 text-sm text-slate-300">
-            <li><strong class="text-white">opencode</strong> — <code class="text-indigo-300">npm install -g @opencode/cli</code></li>
-            <li><strong class="text-white">Gemini CLI</strong> — <code class="text-indigo-300">pip install google-generativeai</code></li>
-            <li><strong class="text-white">Codex CLI</strong> — <code class="text-indigo-300">npm install -g @openai/codex</code></li>
-            <li><strong class="text-white">Claude CLI</strong> — <code class="text-indigo-300">npm install -g @anthropic-ai/claude</code></li>
-          </ul>
-          <p class="text-xs text-slate-500 mt-4">Las fuentes se descargan automáticamente. No requiere acción.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Estructura -->
-    <section class="mb-16">
-      <h2 class="text-3xl font-black text-center mb-10">📁 Estructura</h2>
-      <div class="bg-slate-800/50 rounded-2xl p-6 md:p-8 border border-slate-700/50 font-mono text-sm text-slate-300 leading-relaxed">
-        <span class="text-indigo-400">GeneradorPostInstagram/</span><br/>
-        ├── <span class="text-green-400">post.py</span>              Generador principal (Pillow)<br/>
-        ├── <span class="text-green-400">config.yaml</span>          Configuración del post<br/>
-        ├── <span class="text-green-400">requirements.txt</span>     Dependencias Python<br/>
-        ├── <span class="text-green-400">generate.sh</span>          Script Linux/Mac<br/>
-        ├── <span class="text-green-400">generate.bat</span>         Script Windows<br/>
-        ├── <span class="text-green-400">index.html</span>           Página web del proyecto<br/>
-        ├── <span class="text-yellow-400">templates/</span>          Plantillas visuales<br/>
-        ├── <span class="text-red-400">custom/</span>                Tus datos <span class="text-slate-500">(gitignored)</span><br/>
-        │   ├── context.md       Contexto para IA<br/>
-        │   ├── logo.png         Logo personalizado<br/>
-        │   ├── config.local.yaml<br/>
-        │   ├── config.generated.yaml  Generado por el script<br/>
-        │   ├── layout.png       Fondo de IA de imágenes<br/>
-        │   └── prompt.md        Prompt preparado para IA<br/>
-        ├── <span class="text-red-400">output/</span>                Posts generados <span class="text-slate-500">(gitignored)</span><br/>
-        ├── <span class="text-green-400">AGENTS.md</span>            Guía para asistentes IA<br/>
-        └── <span class="text-green-400">LICENSE</span>               AGPL v3
       </div>
     </section>
 
     <!-- Footer -->
     <footer class="text-center text-slate-500 text-sm border-t border-white/10 pt-8">
-      <p class="mb-2">Creado por <a href="https://github.com/sergarb1" class="text-indigo-400 hover:text-indigo-300">sergarb1</a> · AGPL v3</p>
-      <p>Código abierto — contribuciones, issues y forks bienvenidos</p>
+      <p class="mb-2">Desarrollado con 💚 por <a href="https://github.com/sergarb1" class="text-indigo-400 hover:text-indigo-300">sergarb1</a> · AGPL v3</p>
+      <p>Código libre · Documentación en <a href="README.md" class="underline">README.md</a>, <a href="AGENTS.md" class="underline">AGENTS.md</a> y <a href="HANDSOFF.md" class="underline">HANDSOFF.md</a></p>
     </footer>
   </div>
 </body>

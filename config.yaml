@@ -1,41 +1,77 @@
-title: "Mejora tu Docencia"
-tagline: "Recursos gratuitos para innovar en el aula"
-body: "Un proyecto abierto y colaborativo para compartir estrategias, recursos y herramientas que transforman la educación."
+# ==============================================================================
+# GeneradorPostInstagram 2.0 — Configuración Principal
+# Diseñado para creadores y agentes de IA (Antigravity, OpenCode, Freebuff)
+# ==============================================================================
 
+# ── Contenido Editorial (Anti-IA Slop: directo, específico y honesto) ──
+title: "Mejora tu Docencia"
+tagline: "Estrategias y herramientas abiertas para transformar el aula"
+category: "EDUCACIÓN ABIERTA" # Badge superior
+body: "Plataforma comunitaria de recursos pedagógicos prácticos y verificados por docentes en activo, sin suscripciones ni publicidad."
+
+# ── Puntos Clave / Características (hasta 4) ──
 features:
   - icon: "🎯"
-    title: "100% Gratuito"
-    desc: "Sin coste, sin registro, sin publicidad"
+    title: "100% Libre y Gratuito"
+    desc: "Sin barreras de registro, muros de pago ni rastreo"
   - icon: "🤝"
-    title: "Colaborativo"
-    desc: "Creado por y para docentes"
-  - icon: "🌍"
-    title: "Libre Acceso"
-    desc: "Todo el contenido está a un clic"
-  - icon: "💚"
-    title: "Espíritu educativo"
-    desc: "Mejorar la enseñanza es el objetivo"
+    title: "Construcción Colectiva"
+    desc: "Materiales probados en secundaria, FP y universidad"
+  - icon: "⚡"
+    title: "Implementación Rápida"
+    desc: "Guías directas de 5 minutos listas para aplicar"
+  - icon: "🌱"
+    title: "Código y Contenido Abierto"
+    desc: "Licenciado bajo Creative Commons y AGPL"
 
+# ── Llamada a la Acción (CTA) y Metadatos ──
 cta_text: "mejoratudocencia.es"
 cta_url: "https://mejoratudocencia.es"
-hashtags: "#Educación #Docentes #InnovaciónEducativa #Gratuito"
+hashtags: "#Docencia #EducaciónLibre #RecursosDocentes #InnovacionEducativa"
 
+# ── Configuración Visual y Layout ──
+layout: "card"        # card | diagram | minimal | split | quote
+aspect: "1:1"         # 1:1 (cuadrado 1080x1080) | 4:5 (feed portrait 1080x1350) | 9:16 (story 1080x1920)
+
+# ── Banco de Imágenes Libres (Openverse / Wikimedia) ──
+# Descomenta para buscar y aplicar automáticamente una foto de fondo libre de derechos:
+# stock:
+#   query: "classroom innovation books minimal"
+#   overlay: "dark"    # dark (scrim de contraste) | light | vignette | none
+#   blur: 0            # desenfoque gaussiano (0 a 10)
+
+# ── Diagrama de Excalidraw (SVG o PNG) ──
+# Si usas layout: "diagram" o layout: "split":
+# diagram: "custom/diagram.svg"
+
+# ── Identidad de Marca y Logo ──
+logo:
+  path: null           # Ej: "custom/logo.svg" o "custom/logo.png"
+  position: "top-right"# top-right | top-left | bottom-right | bottom-left | center-top
+  height: 55           # Alto en píxeles (ancho automático proporcional)
+  badge: false         # true para colocar una pastilla de cristal esmerilado detrás
+  extract_palette: false # true para derivar los colores del post directamente del logo
+
+# ── Paleta Cromática ──
 colors:
-  primary: "#16a34a"
-  primary_dark: "#14532d"
-  gradient_top: "#16a34a"
-  gradient_bottom: "#052e16"
-  card_bg: "#ffffffeb"
-  text_body: "#475569"
-  text_light: "#64748b"
-  accent_light: "#bbf7d0"
+  primary: "#16a34a"         # Color corporativo / acento principal
+  primary_dark: "#14532d"    # Tono oscuro para titulares y botones
+  gradient_top: "#15803d"    # Superior del degradado
+  gradient_bottom: "#052e16" # Base profunda del degradado
+  card_bg: "#ffffffeb"       # Fondo de tarjeta (hex con transparencia)
+  text_body: "#334155"       # Texto del cuerpo legible
+  text_light: "#64748b"      # Subtítulos y descripciones
+  accent_light: "#bbf7d0"    # Acento claro para badges y píldoras
 
+# ── Tipografías ──
 fonts:
   title: "Outfit-Bold.ttf"
   tagline: "Outfit-Regular.ttf"
   body: "Outfit-Regular.ttf"
   bold: "Outfit-Bold.ttf"
 
+# ── Imagen de fondo manual (opcional, sobreescribe el gradiente) ──
 background: null
-logo: null
+
+# ── Destino de Salida ──
 output: "output/post.png"

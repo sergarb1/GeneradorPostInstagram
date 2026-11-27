@@ -1,0 +1,17 @@
+{
+  "name": "Excalidraw Blueprint",
+  "description": "Layout de arquitectura técnica con ventana flotante para diagramas SVG/PNG",
+  "layout": "diagram",
+  "aspect": "1:1",
+  "width": 1080,
+  "height": 1080,
+  "diagram": "custom/diagram.svg",
+  "colors": {
+    "primary": "#0284c7",
+    "primary_dark": "#0c4a6e",
+    "gradient_top": "#0369a1",
+    "gradient_bottom": "#082f49",
+    "card_bg": "#f8fafceb",
+    "accent_light": "#bae6fd"
+  }
+}

@@ -1,6 +1,16 @@
-# Template: Default
-# Gradient verde, estilo clean card
-
-layout: "card"  # card | minimal | full
-width: 1080
-height: 1080
+{
+  "name": "Default Card",
+  "description": "Tarjeta flotante con glassmorphism, chips de categoría y lista de puntos clave",
+  "layout": "card",
+  "aspect": "1:1",
+  "width": 1080,
+  "height": 1080,
+  "colors": {
+    "primary": "#4f46e5",
+    "primary_dark": "#1e1b4b",
+    "gradient_top": "#4338ca",
+    "gradient_bottom": "#0f172a",
+    "card_bg": "#ffffffeb",
+    "accent_light": "#c7d2fe"
+  }
+}

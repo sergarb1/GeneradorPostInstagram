@@ -1,0 +1,15 @@
+{
+  "name": "Swiss Editorial Minimal",
+  "description": "Estilo editorial tipográfico de alto contraste y generoso espacio en blanco",
+  "layout": "minimal",
+  "aspect": "4:5",
+  "width": 1080,
+  "height": 1350,
+  "colors": {
+    "primary": "#f97316",
+    "primary_dark": "#431407",
+    "gradient_top": "#18181b",
+    "gradient_bottom": "#09090b",
+    "accent_light": "#fed7aa"
+  }
+}

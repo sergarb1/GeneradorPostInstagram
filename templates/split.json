@@ -1,0 +1,16 @@
+{
+  "name": "Split Showcase",
+  "description": "Mitad superior visual hero (foto de stock o diagrama) y mitad inferior con contenido",
+  "layout": "split",
+  "aspect": "1:1",
+  "width": 1080,
+  "height": 1080,
+  "colors": {
+    "primary": "#059669",
+    "primary_dark": "#064e3b",
+    "gradient_top": "#047857",
+    "gradient_bottom": "#022c22",
+    "card_bg": "#ffffff",
+    "accent_light": "#a7f3d0"
+  }
+}

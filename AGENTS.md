@@ -1,79 +1,198 @@
-# GeneradorPostInstagram — AGENTS.md
+# GeneradorPostInstagram 2.0 — AGENTS.md
 
-## Project
-Genera imágenes promocionales 1080×1080 para Instagram desde YAML config. Funciona sin IA o con apoyo de opencode, Gemini CLI, Codex o Claude.
+> **Guía maestra para Asistentes y Agentes de Código Autónomos**  
+> Diseñado específicamente para **Antigravity**, **OpenCode**, **Freebuff**, **Claude** y **Gemini CLI**.
 
-## Stack
-- Python 3 + Pillow (imagen)
-- pyyaml (config)
-- requests (descarga fuentes)
-- Sin servidor, sin build, 100% local
+---
 
-## GitHub
-- Repo: `github.com/sergarb1/GeneradorPostInstagram`
-- Pages: `https://sergarb1.github.io/GeneradorPostInstagram/`
+## 🎯 Filosofía del Proyecto: Agent-First
 
-## File Structure
+Este proyecto **NO es un software monolítico ni un asistente interactivo rígido**. Es un **framework modular, declarativo y ligero** pensado para que **tú (el agente de IA)** actúes como el director de arte, redactor publicitario y ejecutor técnico del usuario.
+
+En lugar de delegar la creatividad a un menú interactivo en la terminal que pueda fallar, **tú tienes acceso a herramientas especializadas** (búsqueda en bancos libres, renderizado de Excalidraw con CairoSVG, extracción de paletas de logos, validación anti-slop) y orquestas la generación modificando `config.yaml` o `custom/config.local.yaml` y ejecutando `post.py`.
+
+---
+
+## 📁 Estructura del Proyecto y Módulos
+
 ```
 GeneradorPostInstagram/
-├── post.py              # Core: lee YAML, dibuja con Pillow, guarda PNG
-├── config.yaml          # Config principal (título, features, colores, etc.)
-├── requirements.txt     # Dependencias Python
-├── generate.sh          # Script Linux/Mac
-├── generate.bat         # Script Windows
-├── index.html           # Landing page del proyecto
-├── templates/
-│   └── default.json     # Plantilla visual (layout card)
-├── custom/              # GITIGNORED — datos del usuario
-│   ├── context.md       # Contexto del proyecto para IA
-│   ├── logo.png         # Logo personalizado
-│   ├── config.local.yaml# Sobreescribe config.yaml
-│   ├── config.generated.yaml  # Generado por --interactive o IA
-│   └── layout.png       # Fondo generado por IA de imágenes
-├── output/              # GITIGNORED — posts generados
-├── fonts/               # GITIGNORED — fuentes descargadas
-├── AGENTS.md
-├── README.md
-└── LICENSE (AGPL v3)
+├── post.py                 # Core: orquestador gráfico con Pillow y CairoSVG
+├── stock.py                # Módulo: cliente de Openverse/Wikimedia con auto-scrim
+├── excalidraw_engine.py    # Módulo: renderizado vectorial SVG/PNG de Excalidraw
+├── brand_logo.py           # Módulo: gestión de logos vectoriales y extracción de paleta
+├── anti_slop.py            # Módulo: linter de copy, detector de clichés y contraste WCAG
+├── config.yaml             # Configuración principal declarativa
+├── requirements.txt        # Dependencias (pillow, pyyaml, requests, cairosvg)
+├── generate.sh             # Script de orquestación Unix/Mac
+├── generate.bat            # Script de orquestación Windows
+├── templates/              # Plantillas JSON de referencia
+│   ├── default.json        # Layout card clásico con glassmorphism
+│   ├── diagram.json        # Layout blueprint técnico para Excalidraw
+│   ├── minimal.json        # Layout editorial suizo minimalista (4:5)
+│   ├── split.json          # Layout split hero visual + contenido
+│   └── quote.json          # Layout de cita o insight de alto impacto
+├── custom/                 # GITIGNORED — Espacio de trabajo del usuario y del agente
+│   ├── context.md          # Contexto y objetivos del proyecto
+│   ├── logo.svg / logo.png # Logo de marca del usuario
+│   ├── diagram.svg / .png  # Diagramas técnicos exportados de Excalidraw
+│   ├── stock_cache/        # Imágenes de bancos libres descargadas y procesadas
+│   ├── config.local.yaml   # Overrides que el agente o usuario aplican
+│   └── config.generated.yaml# Configuración generada automáticamente
+└── output/                 # GITIGNORED — Posts PNG generados (1080×1080 o 1080×1350)
 ```
 
-## Key Functions (post.py)
-- `load_config()` → YAML → dict, merge con config.local.yaml si existe
-- `deep_merge(base, override)` → merge recursivo de dicts
-- `draw_gradient(draw, w, h, color_top, color_bottom)` → gradiente vertical
-- `render_card(draw, cfg)` → layout card con header, body, features, CTA
-- `main()` → orquesta: background, decoraciones, render, logo overlay, guardado
+---
 
-## Config YAML
+## 🛡️ Habilidad Anti-IA Slop (Reglas Obligatorias)
+
+Todo contenido generado por un agente debe pasar el filtro de calidad **Anti-IA Slop**.
+
+### 1. Lista Negra de Clichés (Prohibidos en Copy)
+**NO uses jamás:**
+- ❌ *"revoluciona" / "revolucionario"*
+- ❌ *"en el vertiginoso mundo de hoy"*
+- ❌ *"en la era digital"*
+- ❌ *"desbloquea todo el potencial"*
+- ❌ *"un mundo de posibilidades"*
+- ❌ *"sin precedentes"*
+- ❌ *"el poder de"*
+- ❌ *"a la vanguardia" / "de vanguardia"*
+- ❌ *"sumérgete en"*
+- ❌ *"game-changer" / "juego-cambiador"*
+- ❌ *"delve", "tapestry", "testament", "unleash", "elevate", "seamlessly"*
+
+### 2. Principios de Redacción Honesta
+- **Especificidad:** Menciona hechos, cifras reales, herramientas y flujos concretos.
+- **Verbos de acción directa:** En lugar de *"Descubre cómo potenciar tus clases"*, escribe *"Plantillas directas de evaluación para secundaria"*.
+- **Moderación con emojis:** Máximo 1 emoji contextual por feature. Nunca uses emojis como balas decorativas genéricas.
+- **Verificación:** Ejecuta siempre `python3 anti_slop.py config.yaml` para comprobar el score (debe ser 100/100).
+
+### 3. Principios de Diseño Anti-Slop
+- Evita gradientes noventeros tipo arcoíris o bolas de plástico 3D.
+- Usa jerarquía tipográfica limpia (titular dominante, subtítulo con interlineado generoso, cajas con paddings de mínimo 30-40px).
+- Respeta ratios de contraste mínimos WCAG AA/AAA (texto blanco sobre fondos de luminancia < 0.18 o texto oscuro sobre fondos > 0.75).
+
+---
+
+## 📸 Habilidad de Bancos de Imágenes Libres (`stock.py`)
+
+El proyecto se integra directamente con la API abierta de **Openverse** (Creative Commons y Dominio Público) y **Wikimedia Commons**. No requiere claves de API.
+
+### Uso Programático desde YAML
 ```yaml
-title: "Nombre del proyecto"         # Título grande
-tagline: "Frase corta"               # Subtítulo
-body: "Texto principal\ncon saltos"  # Cuerpo del post
-features:                            # Lista de features (hasta 4)
-  - icon: "🎯" title: "Feature" desc: "Descripción"
-cta_text: "url.com"                  # Texto del botón CTA
-hashtags: "#hash #tags"              # Hashtags al pie
-colors:
-  primary: "#hex"                    # Color principal
-  gradient_top: "#hex"               # Superior del gradiente
-  gradient_bottom: "#hex"            # Inferior del gradiente
-fonts:
-  title: "Font.ttf"                  # Fuente (se descarga automáticamente)
-layout: "card"                       # Solo card por ahora
-logo: null                           # Ruta a logo en custom/
-output: "output/post.png"            # Archivo de salida
+stock:
+  query: "minimalist architecture concrete dark"
+  overlay: "dark"    # Aplica capa scrim oscura para legibilidad del texto
+  blur: 0            # Desenfoque gaussiano opcional (0 a 10)
 ```
 
-## AI Mode (generate.sh)
-- `--ai opencode` → llama a opencode con el context.md
-- `--ai gemini` → llama a gemini CLI
-- `--ai codex` → llama a codex CLI
-- `--ai claude` → llama a claude CLI
-- Si no hay herramienta o no hay context.md → usa config por defecto
+### Uso Directo por el Agente vía CLI
+```bash
+# Buscar y descargar una imagen de fondo procesada con scrim de contraste:
+python3 stock.py "modern software developer desk" --overlay dark --output custom/fondo_libre.png
+```
 
-## Tips
-- custom/config.local.yaml hace merge profundo: sobreescribe solo las claves que pongas
-- Las fuentes se descargan automáticamente al ejecutar generate.sh (Outfit Regular + Bold)
-- Para probar rápido: `python3 post.py` genera output/post.png
-- Los colores en YAML pueden ser hex (#rrggbb) o hex con alpha (#rrggbbaa para card_bg)
-- El index.html es una landing page informativa; no necesita build
+---
+
+## 📐 Habilidad de Diagramas Excalidraw (`excalidraw_engine.py`)
+
+Permite insertar diagramas de arquitectura, flujos o bocetos técnicos directamente en el post.
+
+### Formatos Soportados
+- **`.svg` o `.excalidraw.svg` (Recomendado):** CairoSVG lo procesa como vector a escala 2.0x, garantizando nitidez perfecta en pantallas Retina.
+- **`.png` o `.excalidraw.png`:** Se auto-recortan los márgenes vacíos y se centran con suavizado Lanczos.
+
+### Cómo configurarlo
+```yaml
+layout: "diagram"             # Usa el layout blueprint técnico
+diagram: "custom/diagram.svg" # Ruta al diagrama exportado
+```
+
+### Previsualización Rápida
+```bash
+python3 excalidraw_engine.py custom/diagram.svg --preview custom/test_card.png
+```
+
+---
+
+## 🏷️ Habilidad de Logos de Marca (`brand_logo.py`)
+
+Soporta logos vectoriales SVG y raster PNG/WebP con canal alfa.
+
+### Configuración en YAML
+```yaml
+logo:
+  path: "custom/logo.svg"
+  position: "top-right"      # top-right | top-left | bottom-right | bottom-left | center-top
+  height: 55                 # Alto en px (ancho proporcional)
+  badge: true                # Dibuja una pastilla de cristal esmerilado protectora
+  extract_palette: true      # DERIVA AUTOMÁTICAMENTE la paleta cromática del post desde el logo
+```
+
+### Extracción de Paleta desde CLI
+```bash
+python3 brand_logo.py custom/logo.svg --palette
+```
+
+---
+
+## 🎨 Layouts Disponibles
+
+| Layout | Cuándo usarlo | Aspecto Recomendado |
+|---|---|---|
+| `card` | Presentación de producto, servicio o 3-4 características | `1:1` o `4:5` |
+| `diagram` | Arquitecturas de software, flujos, Excalidraw, esquemas | `1:1` |
+| `minimal` | Manifiestos, lemas contundentes, diseño editorial suizo | `4:5` (feed portrait) |
+| `split` | Mitad visual (foto stock/diagrama) + mitad resumen | `1:1` |
+| `quote` | Citas de impacto, testimonios, aprendizajes clave | `1:1` o `4:5` |
+
+---
+
+## 🤖 Playbook de Operación para Agentes (El Flujo Maestro)
+
+### Escenario A: El usuario te dice cuál es su logo
+*(Ejemplo: "Este es mi logo: custom/logo.svg, hazme una plantilla de marca")*
+
+1. **Ejecuta la configuración de plantilla:**
+   ```bash
+   python3 brand_logo.py <ruta_del_logo> --setup-template "Nombre de la Marca"
+   ```
+2. **Qué ocurre:**
+   - Se copia el logo a `custom/logo.svg` (o `.png`).
+   - Se extrae la paleta cromática corporativa (`primary`, `primary_dark`, `accent_light`, `gradient_top`, `gradient_bottom`).
+   - Se guarda la plantilla persistente en `custom/brand_template.yaml`.
+   - Se renderiza una previsualización con `python3 post.py`.
+3. **Responde al usuario:**
+   Confirma que la plantilla está lista y que todos los posts que te pida a partir de ahora adoptarán automáticamente esta identidad.
+
+---
+
+### Escenario B: El usuario te pide un post sobre cualquier tema
+*(Ejemplo: "Hazme un post sobre cómo desplegar con Docker usando mi diagrama de Excalidraw")*
+
+1. **Redacta el contenido aplicando Anti-IA Slop:**
+   - Titular honesto y dominante (3 a 7 palabras).
+   - Subtítulo sin adornos ni hipérboles.
+   - Puntos clave concretos con datos, herramientas o métricas reales.
+   - CTA claro y creíble.
+2. **Selecciona el layout:**
+   - `diagram`: Si te da un esquema de Excalidraw (`custom/diagram.svg`).
+   - `minimal`: Si pide formato feed vertical 4:5 con diseño suizo.
+   - `split`: Si pide foto de stock de Openverse arriba y texto abajo.
+   - `card`: Para lista estructurada de 3 o 4 puntos.
+3. **Escribe el contenido en `custom/config.local.yaml`:**
+   *(Nota: No necesitas redefinir colores ni logo; se heredan automáticamente de `custom/brand_template.yaml`).*
+   ```yaml
+   title: "Despliegues en Docker"
+   tagline: "Arquitectura contenerizada paso a paso"
+   layout: "diagram"
+   diagram: "custom/diagram.svg"
+   cta_text: "github.com/tu-repo"
+   ```
+4. **Verifica y Genera:**
+   ```bash
+   python3 anti_slop.py custom/config.local.yaml
+   python3 post.py
+   ```
+5. **Muestra el Resultado:** Confirma al usuario la ruta `output/post.png`.
